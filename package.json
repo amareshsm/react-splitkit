@@ -49,6 +49,9 @@
     "tabbed-panels"
   ],
   "license": "MIT",
+  "workspaces": [
+    "web"
+  ],
   "peerDependencies": {
     "react": ">=18"
   },
