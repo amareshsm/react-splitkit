@@ -2,6 +2,8 @@
 
 Headless, resizable, tabbed, splittable layout primitives for React. Build IDE-style multi-pane UIs with nested splits, tabs per pane, drag-resize, collapse, and full-screen maximize — without prescribing any styling.
 
+**[Documentation](https://react-splitkit.vercel.app/docs)** · **[Live examples](https://react-splitkit.vercel.app/examples/gfe-layout)** · **[npm](https://www.npmjs.com/package/react-splitkit)**
+
 ## Install
 
 ```sh
@@ -198,17 +200,15 @@ The tree is plain JSON. Persist via `onChange` and rehydrate by passing the seri
 />
 ```
 
-## Run the demo
+## Run the docs locally
 
-A fully-styled Tailwind demo lives in [`demo/`](demo/). It showcases the two-column, nested IDE, and custom-themed layouts with light/dark mode.
+The docs and demo site live in [`web/`](web/) and are built with Next.js.
 
 ```sh
-cd demo
-npm install
-npm run dev
+npm install        # installs everything (workspaces)
+cd web
+npm run dev        # http://localhost:3000
 ```
-
-The demo opens at http://localhost:5173. It imports the library directly from `../src` via a Vite alias, so any change to the library hot-reloads instantly.
 
 ## Storybook
 
@@ -218,6 +218,10 @@ Component playgrounds live under [`stories/`](stories/). Each story exposes inte
 npm run storybook         # dev server on http://localhost:6006
 npm run build-storybook   # static build into storybook-static/
 ```
+
+## Contributing & issues
+
+Bug reports and feature requests are welcome — please [open an issue](https://github.com/amareshsm/react-splitkit/issues) on GitHub. For pull requests, open an issue first so we can discuss the approach.
 
 ## License
 

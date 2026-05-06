@@ -15,10 +15,5 @@ export const baseOptions: BaseLayoutProps = {
       </span>
     ),
   },
-  links: [
-    {
-      text: 'Examples',
-      url: '/examples',
-    },
-  ],
+  links: [],
 };
