@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@import "fumadocs-ui/style.css";
+
+/* Include fumadocs-ui components in Tailwind's class scan */
+@source "../node_modules/fumadocs-ui/dist";
+
+/* Class-based dark mode — matches Fumadocs RootProvider.
+ * Uses :is() so the .dark ancestor contributes specificity, ensuring dark
+ * utilities reliably override base utilities (e.g. dark:text-neutral-900
+ * beats text-white when the document has a .dark ancestor). */
+@custom-variant dark (&:is(.dark *), &.dark);
+
+/* Structural layout rules for react-splitkit tablist elements */
+[data-panel-tablist-leading],
+[data-panel-tablist-trailing] {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+[data-panel-tablist-trailing] {
+  margin-left: auto;
+}
+
+[data-panel-tablist-items] {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+[data-panel-tablist-items]::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Landing page buttons ──────────────────────────────────────────────────
+ * fumadocs-ui/style.css ships an un-layered  a { color: inherit }  reset.
+ * Un-layered rules beat @layer utilities, so every Tailwind text-* utility
+ * on a <Link> (which renders as <a>) is silently overridden.  We fix this
+ * by writing our own un-layered rules AFTER the fumadocs import.
+ *
+ * Specificity ladder:
+ *   a { color: inherit }          →  (0,0,1)
+ *   .btn-primary { color: ... }   →  (0,1,0)  ← beats the reset
+ *   .dark .btn-primary { ... }    →  (0,2,0)  ← beats light-mode rule
+ * ────────────────────────────────────────────────────────────────────────── */
+
+/* Hero "Read the docs" — inverts between themes */
+.btn-primary {
+  background-color: #171717;
+  color: #ffffff;
+}
+.btn-primary:hover { background-color: #404040; }
+
+.dark .btn-primary {
+  background-color: #f5f5f5;
+  color: #0a0a0a;
+}
+.dark .btn-primary:hover { background-color: #ffffff; }
+
+/* CTA "Quick start" — always on dark card, white pill */
+.btn-cta-primary {
+  background-color: #f5f5f5;
+  color: #0a0a0a;
+}
+.btn-cta-primary:hover { background-color: #ffffff; }
+
+/* CTA "Full docs" — ghost/outlined on dark card */
+.btn-cta-secondary { color: #d4d4d4; }
+.btn-cta-secondary:hover { color: #f5f5f5; }

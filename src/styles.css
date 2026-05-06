@@ -1,0 +1,209 @@
+/*
+ * react-splitkit — default stylesheet (opt-in).
+ *
+ * Import once at your app entry:
+ *   import 'react-splitkit/styles.css';
+ *
+ * All rules are wrapped in `@layer splitkit`, which puts them in the lowest
+ * cascade tier by default. Any unlayered consumer CSS — even a single-class
+ * selector — automatically wins, so you can override anything here without
+ * fighting specificity or resorting to `!important`.
+ *
+ * Want a stricter ordering? Declare your own layer order before importing:
+ *
+ *   @layer reset, splitkit, app;
+ *   @import url("react-splitkit/styles.css");
+ *
+ * Theming — set any of these custom properties on an ancestor of the layout:
+ *   --sk-bg                 Panel/tabpanel background
+ *   --sk-border             Default divider color
+ *   --sk-tab-bg             Inactive tab background
+ *   --sk-tab-bg-active      Active tab background
+ *   --sk-tab-fg             Inactive tab text
+ *   --sk-tab-fg-active      Active tab text
+ *   --sk-accent             Accent color (resize, focus ring, active tab indicator)
+ *   --sk-resizer-bg         Idle resizer color
+ *   --sk-resizer-bg-hover   Resizer color on hover/focus
+ *   --sk-resizer-bg-active  Resizer color while dragging or in keyboard mode
+ *   --sk-radius             Border radius
+ *   --sk-overlay-shadow     Shadow under maximized overlay
+ *
+ * Custom-property values are *not* layered (CSS layers don't apply to custom
+ * properties the same way), so retheming via `--sk-*` works regardless of
+ * where the consumer sets them.
+ */
+
+@layer splitkit {
+  [data-splitkit-root] {
+    --sk-bg: #ffffff;
+    --sk-border: rgba(0, 0, 0, 0.1);
+    --sk-tab-bg: transparent;
+    --sk-tab-bg-active: #ffffff;
+    --sk-tab-fg: rgba(0, 0, 0, 0.7);
+    --sk-tab-fg-active: rgba(0, 0, 0, 0.95);
+    --sk-accent: #3b82f6;
+    --sk-resizer-bg: rgba(0, 0, 0, 0.08);
+    --sk-resizer-bg-hover: rgba(59, 130, 246, 0.25);
+    --sk-resizer-bg-active: rgba(59, 130, 246, 0.4);
+    --sk-radius: 4px;
+    --sk-overlay-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+
+    background: var(--sk-bg);
+    color: var(--sk-tab-fg-active);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    [data-splitkit-root] {
+      --sk-bg: #1e1e1e;
+      --sk-border: rgba(255, 255, 255, 0.1);
+      --sk-tab-bg-active: #2a2a2a;
+      --sk-tab-fg: rgba(255, 255, 255, 0.65);
+      --sk-tab-fg-active: rgba(255, 255, 255, 0.95);
+      --sk-resizer-bg: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  /* ----- Splits & cells --------------------------------------------------- */
+
+  [data-splitkit-split] {
+    background: var(--sk-bg);
+  }
+
+  [data-splitkit-cell][data-collapsed] {
+    background: var(--sk-bg);
+    border-right: 1px solid var(--sk-border);
+  }
+  [data-splitkit-cell][data-collapsed][data-direction="vertical"] {
+    border-right: 0;
+    border-bottom: 1px solid var(--sk-border);
+  }
+
+  /* ----- Resizer ---------------------------------------------------------- */
+
+  [data-splitkit-resizer] {
+    background: var(--sk-resizer-bg);
+    transition: background 180ms ease;
+  }
+
+  [data-splitkit-resizer]:hover,
+  [data-splitkit-resizer]:focus-visible {
+    background: var(--sk-resizer-bg-hover);
+  }
+
+  [data-splitkit-resizer][data-resizing],
+  [data-splitkit-resizer][data-resize-mode] {
+    background: var(--sk-resizer-bg-active);
+    transition: none;
+  }
+
+  [data-splitkit-resizer]:focus {
+    outline: none;
+  }
+
+  [data-splitkit-resizer]:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--sk-accent);
+  }
+
+  /* ----- Tab list & tabs -------------------------------------------------- */
+
+  [data-panel-tablist] {
+    display: flex;
+    align-items: stretch;
+    background: var(--sk-bg);
+    border-bottom: 1px solid var(--sk-border);
+    /* No overflow here so dropdowns rendered in leading/trailing slots can
+       escape vertically. Horizontal scroll is scoped to the items wrapper. */
+    min-height: 32px;
+    flex: 0 0 auto;
+  }
+
+  [data-panel-tablist-leading],
+  [data-panel-tablist-trailing] {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  [data-panel-tablist-trailing] {
+    margin-left: auto;
+  }
+
+  [data-panel-tablist-items] {
+    display: flex;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+  }
+
+  /* Best-effort defaults for tabs the consumer renders inside the list.
+   * Selectors target [role="tab"] (set by TabList for ARIA), which keeps
+   * specificity low — a single consumer class will win once the splitkit
+   * layer is in effect. Specificity stays low (mostly 0,1,0). */
+  [data-panel-tablist] [role="tab"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--sk-tab-bg);
+    color: var(--sk-tab-fg);
+    border: 0;
+    border-right: 1px solid var(--sk-border);
+    cursor: pointer;
+    white-space: nowrap;
+    font: inherit;
+    user-select: none;
+    position: relative;
+  }
+
+  [data-panel-tablist] [role="tab"]:hover {
+    color: var(--sk-tab-fg-active);
+  }
+
+  [data-panel-tablist] [role="tab"][aria-selected="true"] {
+    background: var(--sk-tab-bg-active);
+    color: var(--sk-tab-fg-active);
+  }
+
+  [data-panel-tablist] [role="tab"][aria-selected="true"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--sk-accent);
+  }
+
+  [data-panel-tablist] [role="tab"]:focus-visible {
+    outline: 2px solid var(--sk-accent);
+    outline-offset: -2px;
+  }
+
+  /* ----- Tab panel (content area) ---------------------------------------- */
+
+  [data-panel-tabpanel] {
+    background: var(--sk-bg);
+    color: var(--sk-tab-fg-active);
+  }
+
+  /* ----- Maximized overlay ------------------------------------------------ */
+
+  [data-splitkit-maximized-overlay] {
+    background: var(--sk-bg);
+    box-shadow: var(--sk-overlay-shadow);
+    z-index: 50;
+  }
+
+  /* ----- Mobile ----------------------------------------------------------- */
+
+  @media (pointer: coarse) {
+    [data-panel-tablist] [role="tab"] {
+      padding: 10px 14px;
+      min-height: 40px;
+    }
+  }
+}

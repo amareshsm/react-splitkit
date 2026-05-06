@@ -1,0 +1,44 @@
+---
+title: Installation
+description: Install react-splitkit and wire up the required styles.
+---
+
+## Install the package
+
+```bash
+npm install react-splitkit
+```
+
+```bash
+yarn add react-splitkit
+```
+
+```bash
+pnpm add react-splitkit
+```
+
+## Import styles
+
+The library ships a minimal `styles.css` that provides theming tokens and the
+structural flex rules for the tablist slots. Import it once at the root of your
+app:
+
+```ts
+import 'react-splitkit/styles.css';
+```
+
+If you are driving all visuals with Tailwind CSS (as the demo does), you can
+skip the library stylesheet and copy the structural rules into your own global
+CSS instead — see the [Quick start](/docs/quick-start) for the exact snippet.
+
+## Peer dependencies
+
+`react-splitkit` requires React 18 or later.
+
+```json
+{
+  "peerDependencies": {
+    "react": ">=18"
+  }
+}
+```

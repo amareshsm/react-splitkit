@@ -1,0 +1,98 @@
+---
+title: Quick start
+description: Build your first resizable split layout in under 5 minutes.
+---
+
+## Define a layout
+
+Use `createPanel` and `createSplit` to describe the initial shape. Everything is
+plain data — no JSX required:
+
+```ts
+import { createPanel, createSplit } from 'react-splitkit';
+
+const layout = createSplit('root', 'horizontal', [
+  createPanel('left', [
+    { id: 'desc', tabType: 'description', title: 'Description' },
+  ]),
+  createPanel('right', [
+    { id: 'preview', tabType: 'preview', title: 'Preview' },
+  ]),
+]);
+```
+
+## Define a registry
+
+The registry maps `tabType` strings to render functions and metadata:
+
+```tsx
+import type { TabRegistry } from 'react-splitkit';
+
+const registry: TabRegistry = {
+  description: {
+    tabType: 'description',
+    title: 'Description',
+    render: () => <div className="p-4">Description content</div>,
+  },
+  preview: {
+    tabType: 'preview',
+    title: 'Preview',
+    render: () => <div className="p-4">Preview content</div>,
+  },
+};
+```
+
+## Render the layout
+
+Wrap everything in `LayoutProvider` and render with `LayoutRoot`. You supply
+the panel chrome via `renderPanel`:
+
+```tsx
+import {
+  LayoutProvider,
+  LayoutRoot,
+  TabList,
+  TabPanel,
+  type RenderPanelProps,
+} from 'react-splitkit';
+
+const MyPanel = ({ panel, style }: RenderPanelProps) => (
+  <div style={style} className="flex flex-col border border-gray-200">
+    <TabList
+      panelId={panel.id}
+      className="flex h-9 border-b border-gray-200"
+      renderTab={({ isActive, tabProps, label }) => (
+        <div {...tabProps} role="tab" className={isActive ? 'font-bold px-3' : 'px-3'}>
+          {label}
+        </div>
+      )}
+    />
+    <div className="flex-1 min-h-0 relative">
+      <TabPanel
+        panelId={panel.id}
+        style={{ position: 'absolute', inset: 0 }}
+        className="flex flex-col"
+      />
+    </div>
+  </div>
+);
+
+export default function App() {
+  return (
+    <div style={{ height: '100vh' }}>
+      <LayoutProvider initialLayout={layout} registry={registry}>
+        <LayoutRoot renderPanel={(p) => <MyPanel {...p} />} />
+      </LayoutProvider>
+    </div>
+  );
+}
+```
+
+That's it — you have a resizable two-panel layout with tabs. Drag the divider
+between panels to resize.
+
+## Next steps
+
+- Add a custom resizer via `renderResizer`
+- Use `usePanel` to split, collapse, or maximize panels programmatically
+- Browse the full [live examples](/examples) for advanced patterns
