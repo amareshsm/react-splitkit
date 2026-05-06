@@ -10,10 +10,13 @@ export const metadata: Metadata = {
   },
   description:
     'Headless, resizable, tabbed, splittable layout primitives for React.',
-  metadataBase: new URL('https://react-splitkit.dev'),
+  metadataBase: new URL('https://react-splitkit.vercel.app'),
   openGraph: {
     siteName: 'react-splitkit',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
   },
   robots: {
     index: true,

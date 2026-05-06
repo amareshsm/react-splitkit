@@ -46,6 +46,7 @@ export async function generateMetadata(props: {
     openGraph: {
       title: page.data.title,
       description: page.data.description,
+      images: ['/opengraph-image'],
     },
   };
 }

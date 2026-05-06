@@ -41,6 +41,8 @@
     "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "keywords": [
+    "react-splitkit",
+    "react-nested-layout",
     "panel-layout",
     "split-pane",
     "resizable-panels",
@@ -49,6 +51,14 @@
     "tabbed-panels"
   ],
   "license": "MIT",
+  "homepage": "https://react-splitkit.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amareshsm/react-splitkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/amareshsm/react-splitkit/issues"
+  },
   "workspaces": [
     "web"
   ],
