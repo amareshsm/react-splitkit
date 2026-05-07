@@ -302,7 +302,6 @@ export default function GFELayoutPage() {
           </a>
           <span className="text-neutral-300 dark:text-neutral-700">|</span>
           <span className="text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">Debounce</span>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-medium">Completed</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-neutral-400 dark:text-neutral-500">Medium · 15 mins</span>

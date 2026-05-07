@@ -91,6 +91,12 @@ const examples = [
     tag: 'Advanced',
     description: 'Full coding-platform UI: description, editor, browser preview, and console — all resizable and collapsible.',
   },
+  {
+    to: '/examples/cursor-ui',
+    title: 'Cursor UI layout',
+    tag: 'Advanced',
+    description: 'Cursor-style IDE clone — file explorer, multi-tab editor, terminal pane, and AI agent sidebar.',
+  },
 ];
 
 const PanelIcon = ({ size = 18 }: { size?: number }) => (
@@ -164,9 +170,9 @@ export default function HomePage() {
             <Link href="/docs" className={primaryBtn}>
               Read the docs <ArrowRightIcon />
             </Link>
-            <Link href="/examples/gfe-layout" className={secondaryBtn}>
+            <a href="#examples" className={secondaryBtn}>
               View live demo
-            </Link>
+            </a>
             <a
               href="https://github.com/amareshsm/react-splitkit"
               className={secondaryBtn}
@@ -242,7 +248,7 @@ export default function HomePage() {
         </section>
 
         {/* ── examples ── */}
-        <section className="bg-neutral-50 dark:bg-neutral-900/30 border-t border-neutral-200 dark:border-neutral-800">
+        <section id="examples" className="scroll-mt-16 bg-neutral-50 dark:bg-neutral-900/30 border-t border-neutral-200 dark:border-neutral-800">
           <div className="max-w-6xl mx-auto px-6 py-16 md:py-20">
             <div className="flex items-end justify-between mb-10">
               <div>

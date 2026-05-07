@@ -25,10 +25,14 @@ const DescriptionContent = () => (
   <div className="h-full overflow-auto px-6 py-5 text-[14px] leading-6 text-neutral-700 dark:text-neutral-300">
     <div className="flex items-center gap-2 mb-1">
       <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">Debounce</h2>
-      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 font-medium">Completed</span>
     </div>
     <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400 mb-4">
-      <span className="inline-grid place-items-center w-5 h-5 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 text-white text-[10px] font-bold">A</span>
+      <span className="inline-grid place-items-center w-5 h-5 rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-300">
+        <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      </span>
       <span className="font-medium text-neutral-700 dark:text-neutral-200">Amaresh S M</span>
       <span>· Front-end engineer</span>
     </div>
