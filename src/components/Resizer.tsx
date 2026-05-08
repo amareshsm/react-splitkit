@@ -121,6 +121,7 @@ export const Resizer = ({
       aria-valuenow={Math.round(split.sizes[index]!)}
       aria-valuemin={Math.round(min1.minSize)}
       aria-valuemax={Math.round(min1.maxSize)}
+      aria-valuetext={`${Math.round(split.sizes[index]!)}%`}
       aria-label={`Resize ${split.direction === 'horizontal' ? 'columns' : 'rows'}`}
       tabIndex={0}
       className={className}

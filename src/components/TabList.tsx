@@ -40,6 +40,8 @@ export interface TabListProps {
   trailing?: ReactNode;
   /** Optional leading slot. */
   leading?: ReactNode;
+  /** Accessible label for the tablist. Recommended when multiple panels exist on the same page. Defaults to "Tabs". */
+  'aria-label'?: string;
   className?: string;
   style?: CSSProperties;
 }
@@ -49,6 +51,7 @@ export const TabList = ({
   renderTab,
   leading,
   trailing,
+  'aria-label': ariaLabel = 'Tabs',
   className,
   style,
 }: TabListProps) => {
@@ -132,6 +135,7 @@ export const TabList = ({
   return (
     <div
       role="tablist"
+      aria-label={ariaLabel}
       data-panel-tablist
       data-panel-id={panelId}
       className={className}
