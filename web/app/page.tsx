@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { InstallCommand } from '@/components/InstallCommand';
 import { CodeBlock } from '@/components/CodeBlock';
+import { FAQ } from '@/components/FAQ';
 import { ArrowRightIcon } from '@/components/icons';
 import type { Metadata } from 'next';
 
@@ -282,6 +283,9 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ── faq ── */}
+        <FAQ />
+
         {/* ── cta banner — always dark, monochrome ── */}
         <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
           <div className="relative rounded-3xl overflow-hidden bg-neutral-900 border border-neutral-800 px-8 py-14 md:px-14">
@@ -292,7 +296,7 @@ export default function HomePage() {
                 backgroundSize: '28px 28px',
               }}
             />
-            <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="relative flex text-center flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-2">
                   Ready to build?
