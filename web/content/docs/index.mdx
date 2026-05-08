@@ -4,6 +4,7 @@ description: Headless, resizable, tabbed, splittable layout primitives for React
 ---
 
 import { Accordions, Accordion } from 'fumadocs-ui/components/accordion';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 ## What is react-splitkit?
 
@@ -13,9 +14,28 @@ resizable, tabbed panel layouts — without any imposed styling.
 You supply the chrome (tab bars, resizers, panel wrappers). The library manages
 all the state: sizes, active tabs, splits, collapse, and maximize.
 
-```bash
-npm install react-splitkit
-```
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">
+    ```bash
+    npm install react-splitkit
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add react-splitkit
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add react-splitkit
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add react-splitkit
+    ```
+  </Tab>
+</Tabs>
 
 ## Features
 
