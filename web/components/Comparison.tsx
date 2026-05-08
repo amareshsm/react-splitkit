@@ -73,7 +73,12 @@ export const Comparison = () => (
                 Feature
               </th>
               <th className="px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-neutral-900 dark:text-neutral-50 bg-neutral-50 dark:bg-neutral-800/60 w-36">
-                react-splitkit
+                <span className="inline-flex flex-col items-center gap-1.5">
+                  react-splitkit
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-[9px] font-semibold tracking-widest text-neutral-500 dark:text-neutral-400">
+                    NEW
+                  </span>
+                </span>
               </th>
               <th className="px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-900 w-44">
                 react-resizable-panels
@@ -104,18 +109,37 @@ export const Comparison = () => (
       </div>
 
       {/* Numbered footnotes */}
-            <div className='pt-4'>
-            <ol className="space-y-1.5 list-none">
-        {Object.entries(notes).map(([n, text]) => (
-          <li key={n} className="flex items-start gap-2 text-xs text-neutral-500 dark:text-neutral-500 leading-relaxed">
-            <span className="flex-shrink-0 inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 text-[9px] font-bold mt-0.5">
-              {n}
-            </span>
-            <span>{text}</span>
-          </li>
-        ))}
-      </ol>
-            </div>
+      <div className="pt-4">
+        <ol className="space-y-1.5 list-none">
+          {Object.entries(notes).map(([n, text]) => (
+            <li key={n} className="flex items-start gap-2 text-xs text-neutral-500 dark:text-neutral-500 leading-relaxed">
+              <span className="flex-shrink-0 inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 text-[9px] font-bold mt-0.5">
+                {n}
+              </span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* Early release note */}
+      <div className="mt-6 flex items-start gap-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/60 px-5 py-4">
+
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+          <span className="font-semibold text-neutral-800 dark:text-neutral-200">Note: </span>{' '}
+          react-splitkit is newly released. The core is working and the API is stable, but as with any early-stage library you may encounter rough edges.
+          If you run into anything unexpected, please{' '}
+          <a
+            href="https://github.com/amareshsm/react-splitkit/issues/new?labels=bug"
+            className="underline underline-offset-2 text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            open an issue
+          </a>
+          {' '}— it helps a lot.
+        </p>
+      </div>
     </div>
   </section>
 );
