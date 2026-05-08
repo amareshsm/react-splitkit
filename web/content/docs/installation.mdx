@@ -3,19 +3,32 @@ title: Installation
 description: Install react-splitkit and wire up the required styles.
 ---
 
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
 ## Install the package
 
-```bash
-npm install react-splitkit
-```
-
-```bash
-yarn add react-splitkit
-```
-
-```bash
-pnpm add react-splitkit
-```
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">
+    ```bash
+    npm install react-splitkit
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add react-splitkit
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add react-splitkit
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add react-splitkit
+    ```
+  </Tab>
+</Tabs>
 
 ## Import styles
 

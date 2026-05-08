@@ -3,6 +3,9 @@ title: Introduction
 description: Headless, resizable, tabbed, splittable layout primitives for React.
 ---
 
+import { Accordions, Accordion } from 'fumadocs-ui/components/accordion';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
 ## What is react-splitkit?
 
 **react-splitkit** is a headless layout library for React that lets you build IDE-grade,
@@ -11,9 +14,28 @@ resizable, tabbed panel layouts — without any imposed styling.
 You supply the chrome (tab bars, resizers, panel wrappers). The library manages
 all the state: sizes, active tabs, splits, collapse, and maximize.
 
-```bash
-npm install react-splitkit
-```
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">
+    ```bash
+    npm install react-splitkit
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add react-splitkit
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add react-splitkit
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add react-splitkit
+    ```
+  </Tab>
+</Tabs>
 
 ## Features
 
@@ -33,6 +55,158 @@ npm install react-splitkit
 | [Nested IDE layout](/examples/nested) | Sidebar + editor/console — the IDE shape |
 | [GreatFrontend layout](/examples/gfe-layout) | Full coding-platform UI with tabs, browser pane |
 | [Cursor UI layout](/examples/cursor-ui) | Cursor-style IDE — file explorer, editor, terminal, AI agent |
+
+## FAQ
+
+<Accordions type="single">
+
+<Accordion id="custom-ui" title="Does react-splitkit allow customizing the UI?">
+
+Yes — completely. react-splitkit is **fully headless**: it ships zero CSS and no opinionated markup. You pass `renderPanel` and `renderTab` functions to render whatever JSX you want.
+
+```tsx
+<LayoutRoot
+  renderPanel={({ panel, style }) => (
+    <YourPanelChrome style={style}>
+      <TabList
+        panelId={panel.id}
+        renderTab={({ tab, isActive, tabProps, label, close }) => (
+          <YourTabButton {...tabProps} active={isActive}>
+            {label}
+            <CloseIcon onClick={close} />
+          </YourTabButton>
+        )}
+      />
+      <TabPanel panelId={panel.id} />
+    </YourPanelChrome>
+  )}
+/>
+```
+
+The library only owns state, ARIA, keyboard handlers, and resize math. Tailwind, CSS Modules, plain CSS — your choice.
+
+</Accordion>
+
+<Accordion id="default-config" title="Can I set default tab configurations?">
+
+Yes. The **tab registry** is where you declare per-`tabType` defaults — title, min/max size, whether it's closable, custom label rendering:
+
+```ts
+const registry: TabRegistry = {
+  editor: {
+    tabType: 'editor',
+    title: 'Editor',          // default title
+    minSize: 30,              // default min % of parent split
+    maxSize: 80,              // default max %
+    closable: true,           // default closable behavior
+    render: (tab) => <Editor file={tab.id} />,
+    renderLabel: (tab) => <span>{tab.title}</span>,
+  },
+};
+```
+
+Per-tab descriptors override the registry defaults. So you set sensible defaults once in the registry, and individual tabs can opt out when needed.
+
+</Accordion>
+
+<Accordion id="multi-root" title="Does it support multiple layouts on the same page?">
+
+Yes. You can render multiple `<LayoutProvider>` instances anywhere — each owns an **independent store and registry**, and panel/tab DOM ids are auto-prefixed per provider (using React's `useId()`) so they never collide.
+
+```tsx
+<div className="grid grid-cols-2 gap-4">
+  <LayoutProvider initialLayout={leftLayout} registry={leftRegistry}>
+    <LayoutRoot renderPanel={renderPanel} />
+  </LayoutProvider>
+
+  <LayoutProvider initialLayout={rightLayout} registry={rightRegistry}>
+    <LayoutRoot renderPanel={renderPanel} />
+  </LayoutProvider>
+</div>
+```
+
+This is useful for:
+- **Dashboards** with multiple independent panel groups (e.g., metrics + logs side-by-side)
+- **Comparison views** showing the same data in two different layouts
+- **Modal / drawer layouts** that need their own internal split structure
+- **Demo pages and Storybook** where multiple examples coexist on one page
+
+</Accordion>
+
+<Accordion id="persistence" title="Can I persist and restore the layout?">
+
+Yes — the layout tree is plain serializable JSON, so you can save it to `localStorage`, a database, or anywhere else. Use the `onChange` callback to capture every mutation, and pass the saved tree as `initialLayout` on next mount:
+
+```tsx
+<LayoutProvider
+  initialLayout={savedLayout ?? defaultLayout}
+  registry={registry}
+  onChange={(layout) => {
+    localStorage.setItem('my-layout', JSON.stringify(layout));
+  }}
+/>
+```
+
+This is a real differentiator — many layout libraries store state imperatively in refs or non-serializable internals, which makes "save the user's workspace and restore it later" surprisingly hard. With react-splitkit it's just `JSON.stringify`.
+
+</Accordion>
+
+<Accordion id="ssr" title="Does it work with SSR and Next.js?">
+
+Yes. The layout tree is plain data, so it serializes cleanly across the server/client boundary. There's nothing browser-specific about declaring the initial shape of a layout — that part runs anywhere.
+
+The interactive bits (drag-resize, keyboard handlers, the maximized overlay) only attach on the client, exactly like any other React component. Render functions you pass via `renderPanel`, `renderTab`, and the registry are called wherever React calls them.
+
+If your layout is dynamic per-user (e.g., loaded from a database), you can hydrate it on the server, pass it to `LayoutProvider`, and it just works.
+
+</Accordion>
+
+<Accordion id="drag-tabs" title="Can users drag tabs between panels?">
+
+Yes — the `MOVE_TAB` action is already in the reducer, so the **state mutation** is built in. Wiring up the drag interaction itself is left to you so you can pick whatever DnD approach fits your app:
+
+```tsx
+import { useLayout } from 'react-splitkit';
+
+const { dispatch } = useLayout();
+
+// On drop:
+dispatch({
+  type: 'MOVE_TAB',
+  fromPanelId: 'panel-a',
+  toPanelId: 'panel-b',
+  tabId: 't1',
+  index: 0,             // optional drop position
+});
+```
+
+Pair this with HTML5 drag-and-drop, [`dnd-kit`](https://dndkit.com), or [`react-dnd`](https://react-dnd.github.io/react-dnd/) — whatever your project already uses. The library handles the tree mutation; you handle the visual feedback.
+
+</Accordion>
+
+<Accordion id="a11y" title="Is react-splitkit accessible?">
+
+Yes — accessibility is built in, not an afterthought. Out of the box:
+
+**ARIA roles & attributes**
+- Tabs use `role="tablist"`, `role="tab"`, `aria-selected`, `aria-controls`
+- Tab content uses `role="tabpanel"` and `aria-labelledby`
+- Resizers use `role="separator"` with `aria-orientation`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and `aria-label`
+- Maximized panel renders inside an overlay with `role="dialog"` and `aria-modal="true"`; underlying content gets `aria-hidden="true"`
+
+**Keyboard navigation**
+- **Tabs:** ←/→ or ↑/↓ navigate between tabs, Home/End jump to first/last, Delete closes (when closable)
+- **Resizer:** Alt+Arrow nudges by 5% (Shift+Alt+Arrow = 10%), Enter toggles a sticky resize mode where plain arrows resize, Escape exits
+
+**Focus management**
+- Active tabs use `tabIndex=0`, inactive use `tabIndex=-1` (roving tabindex pattern)
+- DOM ids are auto-prefixed per provider so screen readers correctly associate tabs with their panels
+
+The headless layer keeps these guarantees regardless of how you style the components.
+
+</Accordion>
+
+</Accordions>
 
 ## Contributing & issues
 
