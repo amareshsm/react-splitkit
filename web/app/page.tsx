@@ -3,6 +3,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { InstallCommand } from '@/components/InstallCommand';
 import { CodeBlock } from '@/components/CodeBlock';
 import { FAQ } from '@/components/FAQ';
+import { Comparison } from '@/components/Comparison';
 import { ArrowRightIcon } from '@/components/icons';
 import type { Metadata } from 'next';
 
@@ -190,12 +191,12 @@ export default function HomePage() {
 
         {/* ── features ── */}
         <section className="bg-neutral-50 dark:bg-neutral-900/30 border-y border-neutral-200 dark:border-neutral-800">
-          <div className="max-w-6xl mx-auto px-6 py-16 md:py-20">
+          <div className="max-w-6xl mx-auto px-6 py-14 md:py-16">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">Why react-splitkit</p>
             <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-50 mb-12 max-w-xl tracking-tight">
               Everything you need to build panel-based apps.
             </h2>
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 pt-4">
               {features.map((f) => (
                 <div key={f.title}>
                   <div className="w-9 h-9 grid place-items-center rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 mb-3 shadow-sm">
@@ -210,7 +211,7 @@ export default function HomePage() {
         </section>
 
         {/* ── code snippet ── */}
-        <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
+        <section className="max-w-6xl mx-auto px-6 py-14 md:py-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">Simple API</p>
@@ -250,7 +251,7 @@ export default function HomePage() {
 
         {/* ── examples ── */}
         <section id="examples" className="scroll-mt-16 bg-neutral-50 dark:bg-neutral-900/30 border-t border-neutral-200 dark:border-neutral-800">
-          <div className="max-w-6xl mx-auto px-6 py-16 md:py-20">
+          <div className="max-w-6xl mx-auto px-6 py-14 md:py-16">
             <div className="flex items-end justify-between mb-10">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2">Live examples</p>
@@ -283,11 +284,14 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ── comparison ── */}
+        <Comparison />
+
         {/* ── faq ── */}
         <FAQ />
 
         {/* ── cta banner — always dark, monochrome ── */}
-        <section className="max-w-6xl mx-auto px-6 py-16 md:py-20">
+        <section className="max-w-6xl mx-auto px-6 py-14 md:py-16">
           <div className="relative rounded-3xl overflow-hidden bg-neutral-900 border border-neutral-800 px-8 py-14 md:px-14">
             <div
               className="absolute inset-0 opacity-[0.04]"

@@ -127,7 +127,7 @@ export const FAQ = () => {
 
   return (
     <section id="faq" className="scroll-mt-16 bg-white dark:bg-neutral-950">
-      <div className="max-w-6xl mx-auto px-6 py-16 md:py-20">
+      <div className="max-w-6xl mx-auto px-6 py-14 md:py-16">
         <div className="grid md:grid-cols-12 gap-10 md:gap-14">
           {/* Left column — heading */}
           <div className="md:col-span-5">
