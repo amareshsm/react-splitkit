@@ -254,7 +254,7 @@ const SolutionPreviewContent = () => (
 
 export const demoRegistry: TabRegistry = {
   description: { tabType: 'description', title: 'Description', minSize: 20, renderLabel: () => <Label icon={<BookIcon />}>Description</Label>, render: () => <DescriptionContent /> },
-  code: { tabType: 'code', title: 'Code', minSize: 20, renderLabel: () => <Label icon={<FileIcon />}>Code</Label>, render: () => <CodeContent /> },
+  code: { tabType: 'code', title: 'Code', minSize: 20, renderLabel: (tab) => <Label icon={<FileIcon />}>{tab.title}</Label>, render: () => <CodeContent /> },
   testCases: { tabType: 'testCases', title: 'Test cases', renderLabel: () => <Label icon={<FlaskIcon />}>Test cases</Label>, render: () => <TestCasesContent /> },
   console: { tabType: 'console', title: 'Console', renderLabel: () => <Label icon={<ConsoleIcon />}>Console</Label>, render: () => <ConsoleContent /> },
   files: { tabType: 'files', title: 'Files', renderLabel: () => <Label icon={<FolderIcon />}>Files</Label>, render: () => <FilesContent /> },
@@ -272,7 +272,7 @@ export const demoRegistry: TabRegistry = {
   },
   browser: { tabType: 'browser', title: 'Browser', renderLabel: () => <Label icon={<GlobeIcon />}>Browser</Label>, render: () => <BrowserContent /> },
   'editor-shortcuts': { tabType: 'editor-shortcuts', title: 'Editor shortcuts', renderLabel: () => <Label icon={<KeyboardIcon />}>Editor shortcuts</Label>, render: () => <EditorShortcutsContent /> },
-  'saved-code': { tabType: 'saved-code', title: 'Saved code', renderLabel: () => <Label icon={<DatabaseIcon />}>Saved code</Label>, render: () => <SavedCodeContent /> },
-  'solution-preview': { tabType: 'solution-preview', title: 'Solution preview', renderLabel: () => <Label icon={<SparkleIcon />}>Solution preview</Label>, render: () => <SolutionPreviewContent /> },
+  'saved-code': { tabType: 'saved-code', title: 'Saved code', renderLabel: (tab) => <Label icon={<DatabaseIcon />}>{tab.title}</Label>, render: () => <SavedCodeContent /> },
+  'solution-preview': { tabType: 'solution-preview', title: 'Solution preview', renderLabel: (tab) => <Label icon={<SparkleIcon />}>{tab.title}</Label>, render: () => <SolutionPreviewContent /> },
   'new-tab': { tabType: 'new-tab', title: 'New tab', availableInAddMenu: false, render: () => null },
 };

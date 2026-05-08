@@ -16,8 +16,11 @@ import {
   type TabDescriptor,
   type TabRegistryEntry,
 } from 'react-splitkit';
+import Link from 'next/link';
 import { demoRegistry } from '@/registry';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
+  ArrowLeftIcon,
   CloseIcon,
   CollapseIcon,
   FileIcon,
@@ -107,7 +110,7 @@ const NewTabChooser = ({ placeholderId, panelId }: { placeholderId: string; pane
         <div className="flex flex-wrap gap-2">
           {choices.map((entry) => (
             <button key={entry.tabType} type="button" onClick={() => pickEntry(entry)} className={chipCls}>
-              {entry.title}
+              {entry.renderLabel?.({ id: entry.tabType, tabType: entry.tabType, title: entry.title }) ?? entry.title}
             </button>
           ))}
         </div>
@@ -226,13 +229,8 @@ const GFEChrome = ({ panel, style }: RenderPanelProps) => {
             }`}
           >
             <span>{label}</span>
-            {closable && tab.tabType !== 'new-tab' && (
-              <span role="button" aria-label="Close tab" onClick={(e) => { e.stopPropagation(); close(); }} className="opacity-0 group-hover:opacity-60 rounded p-0.5 hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-opacity">
-                <CloseIcon width={11} height={11} />
-              </span>
-            )}
-            {tab.tabType === 'new-tab' && (
-              <span role="button" aria-label="Close tab" onClick={(e) => { e.stopPropagation(); close(); }} className="opacity-40 group-hover:opacity-70 rounded p-0.5 hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-opacity">
+            {closable && (
+              <span role="button" aria-label="Close tab" onClick={(e) => { e.stopPropagation(); close(); }} className="opacity-50 rounded p-0.5 hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-opacity">
                 <CloseIcon width={11} height={11} />
               </span>
             )}
@@ -295,19 +293,20 @@ const GFEResizer = (p: RenderResizerProps) => (
 export default function GFELayoutPage() {
   return (
     <div className="h-screen w-screen flex flex-col bg-neutral-100 dark:bg-neutral-950 overflow-hidden">
-      <header className="flex-shrink-0 flex items-center justify-between h-11 px-4 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
-        <div className="flex items-center gap-3">
-          <a href="/" className="text-[13px] text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-100 transition-colors">
-            ← Back
-          </a>
-          <span className="text-neutral-300 dark:text-neutral-700">|</span>
-          <span className="text-[13px] font-semibold text-neutral-800 dark:text-neutral-100">Debounce</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-neutral-400 dark:text-neutral-500">Medium · 15 mins</span>
-          <button type="button" className="h-7 px-3 rounded-md bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[13px] font-medium hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors">
-            Submit
-          </button>
+      <header className="flex-shrink-0 border-b border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-neutral-950/70 backdrop-blur">
+        <div className="px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-md text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              <ArrowLeftIcon width={14} height={14} />
+              Back
+            </Link>
+            <span className="h-5 w-px bg-neutral-200 dark:bg-neutral-800" />
+            <h1 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">GreatFrontend Layout</h1>
+          </div>
+          <ThemeToggle />
         </div>
       </header>
       <div className="flex-1 min-h-0 p-3">
