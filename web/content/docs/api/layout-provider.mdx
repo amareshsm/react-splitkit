@@ -32,7 +32,28 @@ const layout = createSplit('root', 'horizontal', [
 ]);
 ```
 
-`initialLayout` is read **once on mount**. Changes to this prop after mount are ignored — the store owns layout state from that point on. To reset the layout externally, either remount with a new `key` prop or dispatch `REPLACE_LAYOUT`.
+`initialLayout` is read **once on mount** — the same way React's `defaultValue` works on an uncontrolled input. After mount the store owns the layout. Changing this prop on a subsequent render does nothing.
+
+**To swap the layout at runtime, use `REPLACE_LAYOUT`:**
+
+```tsx
+import { useLayout } from 'react-splitkit';
+
+const { dispatch } = useLayout();
+
+// Switch to a different saved workspace, load a user's layout, etc.
+dispatch({ type: 'REPLACE_LAYOUT', layout: newLayout });
+```
+
+**To fully reset the store** (different user, different mode), remount with a new `key`:
+
+```tsx
+<LayoutProvider
+  key={userId}           // new key = new store = fresh initialLayout
+  initialLayout={userLayout}
+  registry={registry}
+/>
+```
 
 ---
 
