@@ -1,0 +1,78 @@
+---
+title: useLayoutBreakpoint
+description: Detect viewport width breakpoints for responsive layout switching.
+---
+
+`useLayoutBreakpoint` returns `true` when the viewport is narrower than a given pixel threshold. Use it to switch between layouts optimised for different screen sizes.
+
+```ts
+import { useLayoutBreakpoint } from 'react-splitkit';
+
+const isMobile = useLayoutBreakpoint(768); // true when viewport < 768px
+```
+
+## Signature
+
+```ts
+function useLayoutBreakpoint(breakpointPx: number): boolean
+```
+
+Returns `true` when `window.innerWidth < breakpointPx`, `false` otherwise. Updates reactively on window resize. Returns `false` on the server (SSR-safe).
+
+---
+
+## What it does and doesn't handle
+
+**Handled:** detecting viewport width so you can choose which layout tree to pass to `LayoutProvider`.
+
+**Not handled:** automatically reorganising the panel tree when the viewport changes. react-splitkit is headless — responsive layout reflow is left to you. This is intentional: the library can't know whether your app should stack panels, hide a sidebar, or show a different tab arrangement on mobile.
+
+---
+
+## Switching layouts by breakpoint
+
+Provide a different `initialLayout` based on the breakpoint. Use `key` on `LayoutProvider` to reset the store when you switch:
+
+```tsx
+import { useLayoutBreakpoint, LayoutProvider, LayoutRoot } from 'react-splitkit';
+
+const desktopLayout = createSplit('root', 'horizontal', [
+  createPanel('sidebar', [...]),
+  createPanel('main', [...]),
+]);
+
+const mobileLayout = createPanel('root', [...]);
+
+export default function App() {
+  const isMobile = useLayoutBreakpoint(768);
+
+  return (
+    <LayoutProvider
+      key={isMobile ? 'mobile' : 'desktop'}
+      initialLayout={isMobile ? mobileLayout : desktopLayout}
+      registry={registry}
+    >
+      <LayoutRoot renderPanel={renderPanel} style={{ height: '100vh' }} />
+    </LayoutProvider>
+  );
+}
+```
+
+The `key` prop causes React to remount `LayoutProvider` when switching breakpoints, which resets the store to the new initial layout. Without `key`, the layout would keep its runtime state (user resizes, open tabs) across the breakpoint change.
+
+---
+
+## Common breakpoints
+
+| Name | Value |
+|------|-------|
+| Mobile | `640` |
+| Tablet | `768` |
+| Desktop | `1024` |
+| Wide | `1280` |
+
+---
+
+## Note on touch input
+
+This hook is for **layout switching**, not for enabling touch support. Touch drag-resize is always on — the `Resizer` uses the Pointer Events API which covers mouse, touch, and pen uniformly. See [Resizer](/docs/api/resizer) for the `touchHitAreaPx` option.

@@ -1,0 +1,158 @@
+---
+title: Styling
+description: How to style react-splitkit using CSS, Tailwind, or data attributes.
+---
+
+react-splitkit is fully headless — it ships no visual opinions. You can style it with Tailwind CSS, CSS Modules, plain CSS, or any CSS-in-JS solution.
+
+## The styles.css file
+
+The package includes a minimal `styles.css` that provides:
+- CSS custom properties (design tokens) for the resizer
+- Structural flex rules for the tablist slot layout (leading / items / trailing)
+- Hover and resize-mode visual feedback on the built-in resizer
+
+Import it once at the root of your app:
+
+```ts
+import 'react-splitkit/styles.css';
+```
+
+If you control all visuals yourself via Tailwind or custom CSS, you can skip this import entirely and copy the structural flex rules inline.
+
+---
+
+## Styling via className and style props
+
+Every component accepts `className` and `style` props for direct styling:
+
+```tsx
+<TabList
+  panelId={panel.id}
+  className="flex h-9 bg-neutral-50 border-b border-neutral-200"
+  renderTab={...}
+/>
+
+<Resizer
+  splitId={splitId}
+  index={index}
+  className="w-px bg-neutral-200 hover:bg-blue-400 transition-colors"
+/>
+```
+
+---
+
+## Styling via data attributes
+
+Every rendered element carries `data-*` attributes you can target in CSS without adding extra classnames. This is useful for global stylesheets or design systems.
+
+### Layout structure
+
+| Attribute | Element | Notes |
+|-----------|---------|-------|
+| `data-splitkit-root` | `LayoutRoot` outer div | |
+| `data-splitkit-tree` | Underlying tree div | Hidden when a panel is maximized |
+| `data-splitkit-split` | Every `SplitNode` container | |
+| `data-splitkit-cell` | Each child slot inside a split | |
+| `data-splitkit-maximized-overlay` | Maximized panel overlay | |
+| `data-direction="horizontal\|vertical"` | Split and cell elements | |
+| `data-collapsed` | Cell when its panel is collapsed | Only present when collapsed |
+
+### Resizer
+
+| Attribute | Element | Notes |
+|-----------|---------|-------|
+| `data-splitkit-resizer` | Resizer div | |
+| `data-split-id` | Resizer div | Which split it belongs to |
+| `data-resizer-index` | Resizer div | Position within the split |
+| `data-direction` | Resizer div | `"horizontal"` or `"vertical"` |
+| `data-resizing` | Resizer div | Present while actively dragging |
+| `data-resize-mode` | Resizer div | Present while in keyboard resize mode |
+
+### TabList
+
+| Attribute | Element |
+|-----------|---------|
+| `data-panel-tablist` | `role="tablist"` container |
+| `data-panel-id` | `role="tablist"` container |
+| `data-panel-tablist-leading` | Leading slot wrapper |
+| `data-panel-tablist-items` | Tab items scroll wrapper |
+| `data-panel-tablist-trailing` | Trailing slot wrapper |
+
+---
+
+## CSS examples
+
+### Resizer visual feedback
+
+```css
+/* Show a colored line on hover */
+[data-splitkit-resizer] {
+  background: transparent;
+  transition: background 150ms;
+}
+[data-splitkit-resizer]:hover,
+[data-splitkit-resizer][data-resizing],
+[data-splitkit-resizer][data-resize-mode] {
+  background: #3b82f6;
+}
+
+/* Vertical resizer is 4px wide, horizontal is 4px tall */
+[data-splitkit-resizer][data-direction="horizontal"] {
+  width: 4px;
+  cursor: col-resize;
+}
+[data-splitkit-resizer][data-direction="vertical"] {
+  height: 4px;
+  cursor: row-resize;
+}
+```
+
+### Collapsed cell
+
+```css
+/* Fade out collapsed panels */
+[data-splitkit-cell][data-collapsed] {
+  opacity: 0.6;
+}
+```
+
+---
+
+## Tailwind example
+
+The live examples use Tailwind exclusively. A typical panel chrome:
+
+```tsx
+const MyPanel = ({ panel, style }: RenderPanelProps) => (
+  <div
+    style={style}
+    className="flex flex-col rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden"
+  >
+    <TabList
+      panelId={panel.id}
+      className="flex items-stretch h-9 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950/50"
+      renderTab={({ isActive, tabProps, label }) => (
+        <button
+          {...tabProps}
+          type="button"
+          className={`px-3 h-full text-sm border-b-2 -mb-px transition-colors ${
+            isActive
+              ? 'border-neutral-900 dark:border-white font-medium text-neutral-900 dark:text-neutral-50'
+              : 'border-transparent text-neutral-400 hover:text-neutral-700'
+          }`}
+        >
+          {label}
+        </button>
+      )}
+    />
+    <div className="flex-1 min-h-0 relative">
+      <TabPanel
+        panelId={panel.id}
+        style={{ position: 'absolute', inset: 0 }}
+        className="flex flex-col overflow-hidden"
+      />
+    </div>
+  </div>
+);
+```

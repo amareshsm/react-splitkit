@@ -1,0 +1,153 @@
+---
+title: useLayout
+description: Access the full layout tree and dispatch actions directly.
+---
+
+`useLayout` returns the entire layout tree and a `dispatch` function for sending actions directly to the store. Use it for tree-wide operations or when you need to read structure that spans multiple panels.
+
+For single-panel operations, prefer [`usePanel`](/docs/api/use-panel) — it re-renders only when that specific panel changes.
+
+```tsx
+import { useLayout } from 'react-splitkit';
+
+const { layout, dispatch } = useLayout();
+```
+
+## Signature
+
+```ts
+function useLayout(): {
+  layout: LayoutNode;
+  dispatch: (action: LayoutAction) => void;
+}
+```
+
+---
+
+## All actions
+
+### `ADD_TAB`
+
+```ts
+dispatch({
+  type: 'ADD_TAB',
+  panelId: string,
+  tab: TabDescriptor,
+  activate?: boolean,
+  index?: number,
+});
+```
+
+### `REMOVE_TAB`
+
+```ts
+dispatch({ type: 'REMOVE_TAB', panelId: string, tabId: string });
+```
+
+### `SET_ACTIVE_TAB`
+
+```ts
+dispatch({ type: 'SET_ACTIVE_TAB', panelId: string, tabId: string });
+```
+
+### `MOVE_TAB`
+
+Moves a tab from one panel to another. The state mutation is built in — wire up your own DnD library for the visual interaction:
+
+```ts
+dispatch({
+  type: 'MOVE_TAB',
+  fromPanelId: string,
+  toPanelId: string,
+  tabId: string,
+  index?: number,   // drop position in the destination panel
+});
+```
+
+```tsx
+// Example: on drop from a dnd-kit handler
+dispatch({
+  type: 'MOVE_TAB',
+  fromPanelId: active.data.current.panelId,
+  toPanelId: over.data.current.panelId,
+  tabId: active.id,
+});
+```
+
+### `REORDER_TAB`
+
+```ts
+dispatch({ type: 'REORDER_TAB', panelId: string, tabId: string, toIndex: number });
+```
+
+### `SPLIT_PANEL`
+
+```ts
+dispatch({
+  type: 'SPLIT_PANEL',
+  panelId: string,
+  target: 'right' | 'bottom' | 'left' | 'top',
+  newPanelId?: string,      // optional — auto-generated if omitted
+  newTabs?: TabDescriptor[], // optional — tabs for the new panel
+});
+```
+
+### `TOGGLE_COLLAPSE`
+
+```ts
+dispatch({ type: 'TOGGLE_COLLAPSE', panelId: string, collapsed?: boolean });
+```
+
+### `TOGGLE_MAXIMIZE`
+
+```ts
+dispatch({ type: 'TOGGLE_MAXIMIZE', panelId: string, maximized?: boolean });
+```
+
+### `REMOVE_PANEL`
+
+```ts
+dispatch({ type: 'REMOVE_PANEL', panelId: string });
+```
+
+### `RESIZE_SPLIT`
+
+```ts
+dispatch({ type: 'RESIZE_SPLIT', splitId: string, sizes: number[] });
+```
+
+`sizes` must be an array of percentages that sum to 100, one per child in the split. Useful for programmatically snapping splits to specific ratios.
+
+### `REPLACE_LAYOUT`
+
+Replaces the entire layout tree atomically:
+
+```ts
+dispatch({ type: 'REPLACE_LAYOUT', layout: LayoutNode });
+```
+
+Use this to switch between saved workspaces or reset the layout to a default state without remounting the provider.
+
+---
+
+## Reading the tree
+
+`layout` is a [`LayoutNode`](/docs/api/types#layoutnode) — either a `PanelNode` or a `SplitNode`. Use the exported helpers to traverse it:
+
+```ts
+import { findPanel, findNode, isPanel, isSplit } from 'react-splitkit';
+
+const { layout } = useLayout();
+
+// Find a specific panel
+const result = findPanel(layout, 'my-panel-id');
+if (result) {
+  console.log(result.node.tabs);
+}
+
+// Walk the tree yourself
+function countPanels(node: LayoutNode): number {
+  if (isPanel(node)) return 1;
+  return node.children.reduce((acc, child) => acc + countPanels(child), 0);
+}
+```

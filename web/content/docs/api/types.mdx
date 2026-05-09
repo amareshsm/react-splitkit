@@ -1,0 +1,238 @@
+---
+title: Types
+description: TypeScript types exported by react-splitkit.
+---
+
+All types are re-exported from the package root and can be imported directly:
+
+```ts
+import type {
+  LayoutNode, PanelNode, SplitNode,
+  TabDescriptor, TabRegistry, TabRegistryEntry,
+  SplitDirection, SplitTarget,
+} from 'react-splitkit';
+```
+
+---
+
+## Layout tree
+
+### `LayoutNode`
+
+```ts
+type LayoutNode = PanelNode | SplitNode;
+```
+
+The discriminated union that represents the entire layout tree. Use `isPanel` and `isSplit` to narrow it:
+
+```ts
+import { isPanel, isSplit } from 'react-splitkit';
+
+function walk(node: LayoutNode) {
+  if (isPanel(node)) {
+    console.log('panel', node.tabs);
+  } else {
+    node.children.forEach(walk);
+  }
+}
+```
+
+---
+
+### `PanelNode`
+
+```ts
+interface PanelNode {
+  id: string;
+  type: 'panel';
+  tabs: TabDescriptor[];
+  activeTabId: string | null;
+  collapsed?: boolean;
+  maximized?: boolean;
+  minSize?: number;   // % of parent split — panel can't be dragged smaller
+  maxSize?: number;   // % of parent split — panel can't be dragged larger
+}
+```
+
+---
+
+### `SplitNode`
+
+```ts
+interface SplitNode {
+  id: string;
+  type: 'split';
+  direction: 'horizontal' | 'vertical';
+  children: LayoutNode[];
+  sizes: number[];   // percentages, length === children.length, sum === 100
+}
+```
+
+`horizontal` = children are laid out left-to-right (columns).
+`vertical` = children are laid out top-to-bottom (rows).
+
+---
+
+### `SplitDirection`
+
+```ts
+type SplitDirection = 'horizontal' | 'vertical';
+```
+
+---
+
+### `SplitTarget`
+
+```ts
+type SplitTarget = 'right' | 'bottom' | 'left' | 'top';
+```
+
+Used by `usePanel().split(target)` and the `SPLIT_PANEL` action.
+
+---
+
+## Tabs
+
+### `TabDescriptor`
+
+The data object for a single tab. Stored in `PanelNode.tabs`.
+
+```ts
+interface TabDescriptor {
+  id: string;            // unique within the layout
+  tabType: string;       // key into the TabRegistry
+  title: string;         // default display title
+  closable?: boolean;    // overrides the registry default
+  minSize?: number;      // % — overrides the registry default for this tab's panel
+  maxSize?: number;      // %
+  meta?: unknown;        // arbitrary consumer data (file path, document id, etc.)
+}
+```
+
+`meta` is useful for attaching data to a tab without encoding it into `tabType`:
+
+```ts
+addTab({
+  id: 'file-1',
+  tabType: 'editor',
+  title: 'App.tsx',
+  meta: { filePath: '/src/App.tsx', language: 'typescript' },
+});
+```
+
+---
+
+## Registry
+
+### `TabRegistry`
+
+```ts
+type TabRegistry = Record<string, TabRegistryEntry>;
+```
+
+A plain object mapping `tabType` strings to their registry entries.
+
+---
+
+### `TabRegistryEntry`
+
+```ts
+interface TabRegistryEntry {
+  tabType: string;
+  title: string;
+
+  // Render the tab's content area
+  render: (tab: TabDescriptor, ctx: TabRenderContext) => ReactNode;
+
+  // Optional: custom label rendered in the tab button (icon + text, etc.)
+  renderLabel?: (tab: TabDescriptor) => ReactNode;
+
+  // Whether tabs of this type can be closed. Default: true.
+  closable?: boolean;
+
+  // Default min/max size (%) for panels holding this tab type.
+  minSize?: number;
+  maxSize?: number;
+
+  // Set to false to hide this tab type from the built-in TabAddMenu.
+  availableInAddMenu?: boolean;
+}
+```
+
+```ts
+const registry: TabRegistry = {
+  editor: {
+    tabType: 'editor',
+    title: 'Editor',
+    render: (tab) => <Editor filePath={tab.meta?.filePath} />,
+    renderLabel: (tab) => (
+      <span className="flex items-center gap-1.5">
+        <FileIcon />
+        {tab.title}
+      </span>
+    ),
+    closable: true,
+    minSize: 15,
+  },
+  terminal: {
+    tabType: 'terminal',
+    title: 'Terminal',
+    render: () => <Terminal />,
+    closable: false,   // terminal can't be closed
+    minSize: 10,
+    maxSize: 60,
+  },
+};
+```
+
+---
+
+### `TabRenderContext`
+
+```ts
+interface TabRenderContext {
+  panelId: string;
+}
+```
+
+Passed as the second argument to `registry.render` and `TabPanel.renderContent`. Contains the panel id so the content can call `usePanel` or dispatch actions back to its own panel.
+
+---
+
+## Helper functions
+
+### `createPanel`
+
+```ts
+function createPanel(id: string, tabs: TabDescriptor[]): PanelNode
+```
+
+### `createSplit`
+
+```ts
+function createSplit(
+  id: string,
+  direction: SplitDirection,
+  children: LayoutNode[],
+  sizes?: number[],  // defaults to equal distribution
+): SplitNode
+```
+
+### `isPanel` / `isSplit`
+
+```ts
+function isPanel(node: LayoutNode): node is PanelNode
+function isSplit(node: LayoutNode): node is SplitNode
+```
+
+### `findPanel`
+
+```ts
+function findPanel(root: LayoutNode, panelId: string): { node: PanelNode } | null
+```
+
+### `findNode`
+
+```ts
+function findNode(root: LayoutNode, nodeId: string): LayoutNode | null
+```

@@ -2,6 +2,7 @@ import { createStore as createVanillaStore, StoreApi } from 'zustand/vanilla';
 import { LayoutNode } from '../core/types';
 import { LayoutAction } from './actions';
 import { layoutReducer, ReducerContext } from './reducer';
+import { normalize } from '../core/normalize';
 import { createId, IdGenerator } from '../utils/ids';
 
 export interface LayoutState {
@@ -30,7 +31,7 @@ export const createLayoutStore = (opts: CreateLayoutStoreOptions): LayoutStore =
   const ctx: ReducerContext = { generateId: opts.generateId ?? createId };
 
   return createVanillaStore<LayoutState>((set, get) => ({
-    layout: opts.initialLayout,
+    layout: normalize(opts.initialLayout) ?? opts.initialLayout,
     dispatch: (action) => {
       const prev = get().layout;
       const next = layoutReducer(prev, action, ctx);

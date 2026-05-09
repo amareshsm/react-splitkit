@@ -1,0 +1,146 @@
+---
+title: Persistence
+description: Save and restore layout state across sessions.
+---
+
+The layout tree is plain serializable JSON, so saving and restoring a user's workspace is straightforward. No special serialization logic is required — `JSON.stringify` and `JSON.parse` are all you need.
+
+## Basic localStorage pattern
+
+```tsx
+import { LayoutProvider, LayoutRoot } from 'react-splitkit';
+
+const STORAGE_KEY = 'my-app-layout';
+
+const defaultLayout = createSplit('root', 'horizontal', [
+  createPanel('left', [{ id: 't1', tabType: 'editor', title: 'Editor' }]),
+  createPanel('right', [{ id: 't2', tabType: 'preview', title: 'Preview' }]),
+]);
+
+function loadLayout() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : defaultLayout;
+  } catch {
+    return defaultLayout;
+  }
+}
+
+export default function App() {
+  return (
+    <LayoutProvider
+      initialLayout={loadLayout()}
+      registry={registry}
+      onChange={(layout) => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
+      }}
+    >
+      <LayoutRoot renderPanel={renderPanel} style={{ height: '100vh' }} />
+    </LayoutProvider>
+  );
+}
+```
+
+`onChange` fires after every mutation (resize, tab switch, split, collapse, etc.) with the new layout tree. Write it wherever you like — localStorage, a database, URL state, etc.
+
+---
+
+## What is saved
+
+Everything in the layout tree is saved:
+
+- Panel positions and split structure
+- Tab lists per panel (order, ids, titles, tabType, meta)
+- Active tab per panel
+- Panel sizes (as percentages)
+- Collapsed state per panel
+
+What is **not** saved: the content inside tabs. The registry's `render` function is called fresh on restore — the tab descriptor (including `meta`) is what reconnects a tab to its content.
+
+---
+
+## Saving to a database
+
+```tsx
+async function saveLayout(layout: LayoutNode) {
+  await fetch('/api/workspace', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ layout }),
+  });
+}
+
+<LayoutProvider
+  initialLayout={serverLayout ?? defaultLayout}
+  registry={registry}
+  onChange={(layout) => {
+    saveLayout(layout); // fire-and-forget
+  }}
+>
+```
+
+For frequent mutations (resize drags), debounce the `onChange` callback to avoid flooding the server:
+
+```ts
+import { useMemo } from 'react';
+import { debounce } from 'lodash-es';
+
+const debouncedSave = useMemo(() => debounce(saveLayout, 500), []);
+
+<LayoutProvider onChange={debouncedSave} ...>
+```
+
+---
+
+## Resetting or switching layouts at runtime
+
+To swap the entire layout without remounting the provider, dispatch `REPLACE_LAYOUT`:
+
+```tsx
+import { useLayout } from 'react-splitkit';
+
+const { dispatch } = useLayout();
+
+// Switch to a different saved workspace
+dispatch({ type: 'REPLACE_LAYOUT', layout: otherSavedLayout });
+```
+
+To reset to the default layout, dispatch with the default:
+
+```tsx
+dispatch({ type: 'REPLACE_LAYOUT', layout: defaultLayout });
+```
+
+---
+
+## Important: initialLayout is a snapshot
+
+`LayoutProvider` reads `initialLayout` once on mount. Changing the prop after mount does nothing — the store is the source of truth from that point. To reset externally, either dispatch `REPLACE_LAYOUT` or remount with a new `key`:
+
+```tsx
+<LayoutProvider
+  key={workspaceId}          // remounts the entire store when workspace changes
+  initialLayout={workspaceLayout}
+  registry={registry}
+>
+```
+
+---
+
+## Schema versioning
+
+If you evolve the layout tree structure across app versions, store a schema version alongside the layout and migrate on load:
+
+```ts
+function loadLayout() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultLayout;
+    const { version, layout } = JSON.parse(raw);
+    if (version !== CURRENT_VERSION) return defaultLayout; // or migrate
+    return layout;
+  } catch {
+    return defaultLayout;
+  }
+}
+```

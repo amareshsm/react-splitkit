@@ -1,0 +1,192 @@
+---
+title: usePanel
+description: Scoped hook for reading and mutating a single panel.
+---
+
+`usePanel` is the primary hook for interacting with a panel. It returns the panel's current state and a set of actions scoped to that panel. The component re-renders only when **this panel's** slice of the layout tree changes — not on unrelated mutations elsewhere.
+
+```tsx
+import { usePanel } from 'react-splitkit';
+
+const { panel, addTab, split, toggleCollapse, toggleMaximize } = usePanel(panelId);
+```
+
+## Signature
+
+```ts
+function usePanel(panelId: string): UsePanelResult
+```
+
+```ts
+interface UsePanelResult {
+  panel: PanelNode | null;
+  setActiveTab: (tabId: string) => void;
+  addTab: (tab: TabDescriptor, opts?: { activate?: boolean; index?: number }) => void;
+  removeTab: (tabId: string) => void;
+  reorderTab: (tabId: string, toIndex: number) => void;
+  split: (target: SplitTarget) => void;
+  toggleCollapse: (collapsed?: boolean) => void;
+  toggleMaximize: (maximized?: boolean) => void;
+  closePanel: () => void;
+}
+```
+
+---
+
+## `panel`
+
+```ts
+panel: PanelNode | null
+```
+
+The current panel node from the layout tree, or `null` if the panel has been removed. Always check for `null` before reading panel fields.
+
+---
+
+## `setActiveTab`
+
+```ts
+setActiveTab(tabId: string): void
+```
+
+Activates a tab by id. Does nothing if the tab is already active.
+
+```tsx
+<button onClick={() => setActiveTab('console')}>Show Console</button>
+```
+
+---
+
+## `addTab`
+
+```ts
+addTab(tab: TabDescriptor, opts?: { activate?: boolean; index?: number }): void
+```
+
+Adds a new tab to the panel.
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `activate` | `false` | Switch to the new tab immediately after adding. |
+| `index` | end | Insert position in the tab list. |
+
+```tsx
+addTab(
+  { id: 'console-1', tabType: 'console', title: 'Console' },
+  { activate: true }
+);
+```
+
+---
+
+## `removeTab`
+
+```ts
+removeTab(tabId: string): void
+```
+
+Removes a tab by id. If it was the active tab, the nearest sibling becomes active.
+
+---
+
+## `reorderTab`
+
+```ts
+reorderTab(tabId: string, toIndex: number): void
+```
+
+Moves a tab to a new position within the same panel. Useful for implementing drag-to-reorder within a tab bar.
+
+```tsx
+// Move tab to position 0 (leftmost)
+reorderTab('my-tab', 0);
+```
+
+---
+
+## `split`
+
+```ts
+split(target: SplitTarget): void
+
+type SplitTarget = 'right' | 'bottom' | 'left' | 'top'
+```
+
+Splits the panel in the given direction, creating a new empty panel alongside it. The new panel gets a copy of the current panel's active tab type.
+
+```tsx
+<button onClick={() => split('right')}>Split right</button>
+<button onClick={() => split('bottom')}>Split down</button>
+```
+
+---
+
+## `toggleCollapse`
+
+```ts
+toggleCollapse(collapsed?: boolean): void
+```
+
+Collapses or expands the panel. Pass an explicit boolean to force a specific state; omit it to toggle.
+
+```tsx
+toggleCollapse();       // toggle
+toggleCollapse(true);   // force collapse
+toggleCollapse(false);  // force expand
+```
+
+When collapsed, the panel renders at a fixed minimum height/width (36px). The resizer between it and its sibling is hidden while collapsed.
+
+---
+
+## `toggleMaximize`
+
+```ts
+toggleMaximize(maximized?: boolean): void
+```
+
+Maximizes the panel so it covers the full `LayoutRoot` bounds. Only one panel can be maximized at a time — maximizing a second panel un-maximizes the first. Pass an explicit boolean to force a state; omit to toggle.
+
+```tsx
+toggleMaximize();       // toggle
+toggleMaximize(true);   // force maximize
+toggleMaximize(false);  // force restore
+```
+
+---
+
+## `closePanel`
+
+```ts
+closePanel(): void
+```
+
+Removes the entire panel from the layout tree. If the panel is the only child of its parent split, the split is also removed. No-op if this panel is the root node.
+
+```tsx
+<button onClick={() => closePanel()}>Close pane</button>
+```
+
+---
+
+## Usage in renderPanel
+
+`usePanel` is most commonly called inside the `renderPanel` callback:
+
+```tsx
+const MyPanel = ({ panel, style }: RenderPanelProps) => {
+  const { toggleCollapse, toggleMaximize, split, closePanel } = usePanel(panel.id);
+
+  return (
+    <div style={style} className="flex flex-col">
+      <div className="flex items-center h-9 border-b">
+        <TabList panelId={panel.id} renderTab={...} />
+        <button onClick={() => split('right')}>Split</button>
+        <button onClick={() => toggleMaximize()}>Maximize</button>
+        <button onClick={() => closePanel()}>Close</button>
+      </div>
+      <TabPanel panelId={panel.id} style={{ position: 'absolute', inset: 0 }} />
+    </div>
+  );
+};
+```

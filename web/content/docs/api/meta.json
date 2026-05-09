@@ -1,0 +1,14 @@
+{
+  "title": "API Reference",
+  "pages": [
+    "layout-provider",
+    "layout-root",
+    "tab-list",
+    "tab-panel",
+    "resizer",
+    "use-panel",
+    "use-layout",
+    "use-layout-breakpoint",
+    "types"
+  ]
+}

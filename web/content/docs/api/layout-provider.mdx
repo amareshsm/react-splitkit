@@ -1,0 +1,127 @@
+---
+title: LayoutProvider
+description: The root context provider that owns the layout store and tab registry.
+---
+
+`LayoutProvider` is the top-level wrapper for every layout. It creates an isolated Zustand store and makes the tab registry available to all descendants. Multiple providers can coexist on the same page without interfering with each other.
+
+```tsx
+import { LayoutProvider } from 'react-splitkit';
+
+<LayoutProvider initialLayout={layout} registry={registry}>
+  <LayoutRoot renderPanel={renderPanel} />
+</LayoutProvider>
+```
+
+## Props
+
+### `initialLayout` (required)
+
+```ts
+initialLayout: LayoutNode
+```
+
+The initial shape of the layout tree. Build it with `createPanel` and `createSplit`:
+
+```ts
+import { createPanel, createSplit } from 'react-splitkit';
+
+const layout = createSplit('root', 'horizontal', [
+  createPanel('left', [{ id: 't1', tabType: 'editor', title: 'Editor' }]),
+  createPanel('right', [{ id: 't2', tabType: 'preview', title: 'Preview' }]),
+]);
+```
+
+`initialLayout` is read **once on mount**. Changes to this prop after mount are ignored — the store owns layout state from that point on. To reset the layout externally, either remount with a new `key` prop or dispatch `REPLACE_LAYOUT`.
+
+---
+
+### `registry` (required)
+
+```ts
+registry: TabRegistry
+```
+
+Maps `tabType` strings to render functions and metadata. See [`TabRegistry`](/docs/api/types#tabregistry) for the full shape.
+
+```ts
+const registry: TabRegistry = {
+  editor: {
+    tabType: 'editor',
+    title: 'Editor',
+    render: (tab) => <Editor file={tab.id} />,
+    closable: true,
+    minSize: 20,
+  },
+};
+```
+
+---
+
+### `onChange`
+
+```ts
+onChange?: (layout: LayoutNode, action: LayoutAction) => void
+```
+
+Called after every successful state mutation with the new layout tree and the action that caused it. Use this to persist the layout:
+
+```tsx
+<LayoutProvider
+  initialLayout={saved ?? defaultLayout}
+  registry={registry}
+  onChange={(layout) => {
+    localStorage.setItem('my-layout', JSON.stringify(layout));
+  }}
+>
+```
+
+The callback receives the full serializable layout tree — save it anywhere (localStorage, a database, URL params) and pass it back as `initialLayout` on the next mount.
+
+---
+
+### `generateId`
+
+```ts
+generateId?: () => string
+```
+
+Custom id generator for new nodes created at runtime (splits, tabs). Defaults to a short random string. Override this for SSR determinism or cross-instance uniqueness:
+
+```ts
+import { nanoid } from 'nanoid';
+
+<LayoutProvider generateId={() => nanoid()} ... />
+```
+
+---
+
+## Multiple providers
+
+Each `LayoutProvider` instance is fully isolated — its own store, its own registry, its own id namespace. DOM ids are auto-prefixed per provider using React's `useId()` so `aria-controls` / `aria-labelledby` associations never collide across instances.
+
+```tsx
+<div className="grid grid-cols-2 gap-4">
+  <LayoutProvider initialLayout={leftLayout} registry={registry}>
+    <LayoutRoot renderPanel={renderPanel} />
+  </LayoutProvider>
+
+  <LayoutProvider initialLayout={rightLayout} registry={registry}>
+    <LayoutRoot renderPanel={renderPanel} />
+  </LayoutProvider>
+</div>
+```
+
+---
+
+## Replacing the layout externally
+
+If you need to swap the entire layout tree at runtime (e.g., switching between saved workspaces), dispatch `REPLACE_LAYOUT`:
+
+```tsx
+import { useLayout } from 'react-splitkit';
+
+const { dispatch } = useLayout();
+
+dispatch({ type: 'REPLACE_LAYOUT', layout: savedLayout });
+```

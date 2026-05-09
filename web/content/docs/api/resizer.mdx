@@ -1,0 +1,112 @@
+---
+title: Resizer
+description: The interactive drag handle between two split siblings.
+---
+
+`Resizer` is the built-in drag handle between two adjacent panels in a split. It handles pointer events (mouse, touch, pen), keyboard resizing, min/max constraints, and a touch-friendly expanded hit area.
+
+You rarely need to import `Resizer` directly — `LayoutRoot` renders it automatically when you omit `renderResizer`. Import it when you want custom styling on the built-in behaviour:
+
+```tsx
+import { Resizer } from 'react-splitkit';
+
+const MyResizer = ({ splitId, index }: RenderResizerProps) => (
+  <Resizer
+    splitId={splitId}
+    index={index}
+    className="bg-neutral-200 dark:bg-neutral-700 hover:bg-blue-400 transition-colors"
+  />
+);
+
+<LayoutRoot renderResizer={MyResizer} renderPanel={renderPanel} />
+```
+
+## Props
+
+### `splitId` (required)
+
+```ts
+splitId: string
+```
+
+ID of the parent `SplitNode` this resizer belongs to.
+
+---
+
+### `index` (required)
+
+```ts
+index: number
+```
+
+Position of the resizer within the split. `0` = between child 0 and child 1, `1` = between child 1 and child 2, and so on.
+
+---
+
+### `touchHitAreaPx`
+
+```ts
+touchHitAreaPx?: number
+// default: 24
+```
+
+The visible resizer is 4 px wide. `touchHitAreaPx` sets the total width of the invisible touch target centered around it, making it easy to grab on small screens without changing the visual size.
+
+```tsx
+<Resizer splitId={splitId} index={index} touchHitAreaPx={32} />
+```
+
+Set to `4` to disable the expanded hit area entirely.
+
+---
+
+### `className` / `style`
+
+Applied to the resizer element. The structural styles (flex sizing, cursor, position) are set internally. Use `className` or `style` for visual overrides only:
+
+```tsx
+<Resizer
+  splitId={splitId}
+  index={index}
+  className="w-px bg-neutral-200 dark:bg-neutral-800 hover:bg-blue-500 transition-colors"
+/>
+```
+
+---
+
+## Keyboard resizing
+
+The resizer is focusable (`tabIndex={0}`) and supports two keyboard modes:
+
+**Direct shortcuts (work at any time):**
+
+| Keys | Action |
+|------|--------|
+| `Alt + ←` / `Alt + ↑` | Shrink by 5% |
+| `Alt + →` / `Alt + ↓` | Grow by 5% |
+| `Shift + Alt + ←/↑` | Shrink by 10% |
+| `Shift + Alt + →/↓` | Grow by 10% |
+
+**Resize mode (Enter to activate):**
+
+| Keys | Action |
+|------|--------|
+| `Enter` | Toggle resize mode |
+| `←` / `↑` / `→` / `↓` | Resize by 5% (while in mode) |
+| `Escape` or blur | Exit resize mode |
+
+---
+
+## ARIA
+
+The resizer exposes the full set of ARIA attributes for `role="separator"`:
+
+```
+role="separator"
+aria-orientation="vertical" | "horizontal"
+aria-valuenow={currentSize}       // integer percentage
+aria-valuemin={minSize}
+aria-valuemax={maxSize}
+aria-valuetext="50%"              // human-readable
+aria-label="Resize columns" | "Resize rows"
+```

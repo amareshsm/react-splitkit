@@ -164,7 +164,7 @@ export default function HomePage() {
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 max-w-3xl leading-[1.1] mb-6">
             Build IDE-grade layouts for React.
           </h1>
-          <p className="text-lg md:text-xl text-neutral-500 dark:text-neutral-400 max-w-2xl leading-relaxed mb-8">
+          <p className="pt-2 text-lg md:text-xl text-neutral-500 dark:text-neutral-400 max-w-2xl leading-relaxed mb-8">
             Headless, resizable, tabbed panel splits. No imposed styles — you own every pixel.
             Ship complex multi-panel UIs in hours, not weeks.
           </p>

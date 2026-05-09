@@ -1,0 +1,112 @@
+---
+title: LayoutRoot
+description: The rendering engine that turns the layout tree into DOM.
+---
+
+`LayoutRoot` reads the layout tree from the nearest `LayoutProvider` and renders it recursively. It delegates all visual decisions to the render props you supply — it owns no markup of its own beyond structural flex containers.
+
+```tsx
+import { LayoutRoot } from 'react-splitkit';
+
+<LayoutRoot
+  renderPanel={(p) => <MyPanel {...p} />}
+  renderResizer={(p) => <MyResizer {...p} />}
+  style={{ height: '100%' }}
+/>
+```
+
+## Props
+
+### `renderPanel` (required)
+
+```ts
+renderPanel: (props: RenderPanelProps) => ReactNode
+```
+
+Called once per panel node in the tree. You receive the panel's data and the sizing styles it needs:
+
+```ts
+interface RenderPanelProps {
+  panel: PanelNode;   // the full panel node (tabs, activeTabId, collapsed, maximized…)
+  style: CSSProperties; // flex sizing — must be spread onto your root element
+}
+```
+
+**The `style` prop is load-bearing.** Spread it onto the outermost element your function returns:
+
+```tsx
+const MyPanel = ({ panel, style }: RenderPanelProps) => (
+  <div style={style} className="flex flex-col border">
+    <TabList panelId={panel.id} renderTab={...} />
+    <TabPanel panelId={panel.id} />
+  </div>
+);
+```
+
+Omitting `style` will break sizing and collapse.
+
+---
+
+### `renderResizer`
+
+```ts
+renderResizer?: (props: RenderResizerProps) => ReactNode
+```
+
+Optional. When omitted, `LayoutRoot` renders the built-in `<Resizer>` component. Provide this when you want full control over the resizer's DOM and styling:
+
+```ts
+interface RenderResizerProps {
+  splitId: string;              // ID of the parent split node
+  index: number;                // position (0 = between child 0 and 1)
+  direction: 'horizontal' | 'vertical';
+}
+```
+
+Example — a thin custom resizer:
+
+```tsx
+import { Resizer } from 'react-splitkit';
+
+const MyResizer = ({ splitId, index }: RenderResizerProps) => (
+  <Resizer
+    splitId={splitId}
+    index={index}
+    className="w-1 bg-neutral-200 hover:bg-blue-400 transition-colors"
+  />
+);
+```
+
+---
+
+### `maximizeMode`
+
+```ts
+maximizeMode?: 'overlay' | 'inline'
+// default: 'overlay'
+```
+
+Controls how a maximized panel is rendered:
+
+| Value | Behaviour |
+|-------|-----------|
+| `'overlay'` | The maximized panel covers the full `LayoutRoot` bounds in an absolute overlay. The underlying tree stays mounted but is hidden (`aria-hidden`, `inert`) so focus and scroll position are preserved when un-maximizing. |
+| `'inline'` | The library ignores the `maximized` flag entirely — handle it yourself in `renderPanel`. |
+
+---
+
+### `className` / `style`
+
+```ts
+className?: string
+style?: CSSProperties
+```
+
+Applied to the root container div. Use `style` to set the height — `LayoutRoot` fills whatever space its container gives it:
+
+```tsx
+<LayoutRoot
+  renderPanel={renderPanel}
+  style={{ height: '100vh' }}
+/>
+```

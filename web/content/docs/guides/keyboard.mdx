@@ -1,0 +1,78 @@
+---
+title: Keyboard reference
+description: Complete keyboard shortcut reference for react-splitkit.
+---
+
+react-splitkit has full keyboard support built in — no configuration required. All shortcuts work out of the box when you use the `TabList` and `Resizer` components.
+
+---
+
+## Tab navigation
+
+Focus any tab button and use these keys to navigate:
+
+| Key | Action |
+|-----|--------|
+| `→` or `↓` | Focus next tab |
+| `←` or `↑` | Focus previous tab |
+| `Home` | Focus first tab |
+| `End` | Focus last tab |
+| `Delete` | Close focused tab (only if tab is closable) |
+
+Tabs use the **roving tabindex** pattern — only the active tab has `tabIndex={0}` and can receive focus via `Tab`. Once focused, use arrow keys to move between tabs.
+
+---
+
+## Resizer keyboard control
+
+Focus any resizer (via `Tab` key) and use these shortcuts:
+
+### Direct shortcuts (always available)
+
+| Keys | Action |
+|------|--------|
+| `Alt + →` or `Alt + ↓` | Grow by 5% |
+| `Alt + ←` or `Alt + ↑` | Shrink by 5% |
+| `Shift + Alt + →` / `↓` | Grow by 10% |
+| `Shift + Alt + ←` / `↑` | Shrink by 10% |
+
+### Resize mode
+
+Press `Enter` to enter resize mode on a focused resizer. While in resize mode:
+
+| Keys | Action |
+|------|--------|
+| `Enter` | Toggle resize mode on/off |
+| `→` or `↓` | Grow by 5% |
+| `←` or `↑` | Shrink by 5% |
+| `Escape` | Exit resize mode |
+| Blur (Tab away) | Exit resize mode automatically |
+
+Resize mode is indicated visually (the `data-resize-mode` attribute is set on the resizer element) — style it as needed:
+
+```css
+[data-splitkit-resizer][data-resize-mode] {
+  outline: 2px solid #3b82f6;
+}
+```
+
+---
+
+## ARIA roles
+
+| Element | Role | Key attributes |
+|---------|------|----------------|
+| Tab button | `tab` | `aria-selected`, `aria-controls`, `tabIndex` |
+| Tab bar | `tablist` | `aria-label` |
+| Tab content | `tabpanel` | `aria-labelledby` |
+| Resizer | `separator` | `aria-orientation`, `aria-valuenow`, `aria-valuetext`, `aria-valuemin`, `aria-valuemax` |
+| Maximized overlay | `dialog` | `aria-modal="true"`, `aria-label` |
+
+---
+
+## Focus management
+
+- When a panel is maximized, the underlying tree receives `aria-hidden="true"` and the `inert` attribute, preventing focus from entering hidden content.
+- When un-maximized, focus returns to wherever it was before.
+- Tab content panels use `aria-labelledby` pointing to their corresponding tab button so screen readers announce the correct label when navigating to the panel.
+- DOM ids are auto-prefixed per `LayoutProvider` instance — multiple providers on the same page never produce duplicate ids.
