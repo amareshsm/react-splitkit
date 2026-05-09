@@ -334,7 +334,11 @@ export default function HomePage() {
             <span className="inline-grid place-items-center w-6 h-6 rounded-md bg-neutral-900 dark:bg-neutral-800 text-white">
               <PanelIcon size={12} />
             </span>
-            <span>react-splitkit — MIT licence · Built by Amaresh S M</span>
+            <span>react-splitkit — MIT licence · Built by{' '}
+              <a href="https://www.amaresh-sm.in/" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors underline underline-offset-2">
+                Amaresh S M
+              </a>
+            </span>
           </div>
           <div className="flex items-center gap-5">
             <Link href="/docs" className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors">Docs</Link>
