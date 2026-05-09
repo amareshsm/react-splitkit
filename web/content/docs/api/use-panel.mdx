@@ -108,9 +108,9 @@ reorderTab('my-tab', 0);
 
 ```ts
 split(target: SplitTarget): void
-
-type SplitTarget = 'right' | 'bottom' | 'left' | 'top'
 ```
+
+`SplitTarget` is `'right' | 'bottom' | 'left' | 'top'`. See [`SplitTarget`](/docs/api/types#splittarget) in the types reference.
 
 Splits the panel in the given direction, creating a new empty panel alongside it. The new panel gets a copy of the current panel's active tab type.
 
@@ -190,3 +190,16 @@ const MyPanel = ({ panel, style }: RenderPanelProps) => {
   );
 };
 ```
+
+---
+
+## When to use `useLayout` instead
+
+`usePanel` covers the vast majority of cases. Reach for [`useLayout`](/docs/api/use-layout) when:
+
+- **Moving a tab between panels** — `MOVE_TAB` involves two panels, so neither one "owns" the action. `useLayout` gives you `dispatch` without being tied to a single panel id.
+- **Reading the full tree** — counting panels, walking the tree to find a panel by tab type, or rendering a layout overview.
+- **Replacing the entire layout** — `REPLACE_LAYOUT` swaps the whole tree at once.
+- **Building UI outside `renderPanel`** — a top-level toolbar, breadcrumb trail, or workspace switcher that has no panel context to pass to `usePanel`.
+
+The key difference is re-render scope: `usePanel` re-renders only when that specific panel changes. `useLayout` re-renders on any layout change anywhere in the tree. Use `usePanel` wherever it's sufficient.

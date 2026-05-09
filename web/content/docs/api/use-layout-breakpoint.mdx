@@ -58,7 +58,7 @@ export default function App() {
 }
 ```
 
-The `key` prop causes React to remount `LayoutProvider` when switching breakpoints, which resets the store to the new initial layout. Without `key`, the layout would keep its runtime state (user resizes, open tabs) across the breakpoint change.
+The `key` prop causes React to remount `LayoutProvider` when switching breakpoints, which resets the store to the new initial layout. Without `key`, the layout would keep its runtime state (user resizes, open tabs) across the breakpoint change. See [`LayoutProvider`](/docs/api/layout-provider) for full details on this pattern.
 
 ---
 

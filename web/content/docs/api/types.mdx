@@ -228,11 +228,29 @@ function isSplit(node: LayoutNode): node is SplitNode
 ### `findPanel`
 
 ```ts
-function findPanel(root: LayoutNode, panelId: string): { node: PanelNode } | null
+function findPanel(root: LayoutNode, panelId: string): FoundNode<PanelNode> | null
 ```
 
 ### `findNode`
 
 ```ts
-function findNode(root: LayoutNode, nodeId: string): LayoutNode | null
+function findNode(root: LayoutNode, nodeId: string): FoundNode | null
+
+interface FoundNode<T extends LayoutNode = LayoutNode> {
+  node: T;
+  path: number[];          // indexes from root to this node
+  parent: SplitNode | null;
+  indexInParent: number;   // -1 if root
+}
+```
+
+Access the node via `.node`:
+
+```ts
+const result = findNode(layout, 'my-panel-id');
+if (result) {
+  console.log(result.node);        // the LayoutNode
+  console.log(result.parent);      // its parent SplitNode
+  console.log(result.indexInParent); // its position in parent.children
+}
 ```

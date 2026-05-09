@@ -1,0 +1,161 @@
+---
+title: TabAddMenu
+description: Headless "add tab" menu that lists available tab types for a panel.
+---
+
+`TabAddMenu` is a headless component that computes the list of tab types available to add to a panel and hands it to your `render` prop. It does no UI — pair it with any popover or dropdown library you already use.
+
+```tsx
+import { TabAddMenu } from 'react-splitkit';
+
+<TabAddMenu
+  panelId={panel.id}
+  render={(items) => (
+    <ul>
+      {items.map(({ entry, alreadyAdded, add }) => (
+        <li key={entry.tabType}>
+          <button onClick={add} disabled={alreadyAdded}>
+            {entry.title}
+          </button>
+        </li>
+      ))}
+    </ul>
+  )}
+/>
+```
+
+## Props
+
+### `panelId` (required)
+
+```ts
+panelId: string
+```
+
+The panel to add tabs to. Must match a `PanelNode` id in the layout tree.
+
+---
+
+### `render` (required)
+
+```ts
+render: (items: AddMenuItem[]) => ReactNode
+```
+
+Called with the list of available items. Render whatever UI you want — a dropdown, a popover, a context menu:
+
+```ts
+interface AddMenuItem {
+  entry: TabRegistryEntry;   // the full registry entry (title, icon, tabType…)
+  alreadyAdded: boolean;     // true if this tabType is already open in the panel
+  add: () => void;           // adds the tab and activates it
+}
+```
+
+`alreadyAdded` is provided so you can grey out or hide types already present — the library doesn't enforce this, it's your call.
+
+---
+
+### `filter`
+
+```ts
+filter?: (entry: TabRegistryEntry) => boolean
+```
+
+Additional filter applied on top of the default. The default already excludes entries where `availableInAddMenu === false`. Use `filter` to narrow further — for example, show only entries relevant to a particular panel role:
+
+```tsx
+<TabAddMenu
+  panelId={panel.id}
+  filter={(entry) => entry.tabType !== 'terminal'}
+  render={...}
+/>
+```
+
+---
+
+## Registry integration
+
+`TabAddMenu` reads the registry automatically. For a tab type to appear in the menu:
+
+1. Its registry entry must not have `availableInAddMenu: false` (the default is `true` / included).
+2. It must not be filtered out by the `filter` prop.
+
+When the user picks an item, `add()` calls the entry's `createDescriptor()` if defined — use this to generate a fresh id or populate default `meta`:
+
+```ts
+const registry: TabRegistry = {
+  editor: {
+    tabType: 'editor',
+    title: 'Editor',
+    render: (tab) => <Editor file={tab.meta?.file} />,
+    createDescriptor: () => ({
+      id: crypto.randomUUID(),
+      tabType: 'editor',
+      title: 'Editor',
+    }),
+  },
+  settings: {
+    tabType: 'settings',
+    title: 'Settings',
+    render: () => <Settings />,
+    // No createDescriptor — TabAddMenu falls back to { id, tabType, title }
+    availableInAddMenu: true,
+  },
+  internal: {
+    tabType: 'internal',
+    title: 'Internal',
+    render: () => null,
+    availableInAddMenu: false,  // hidden from the menu entirely
+  },
+};
+```
+
+---
+
+## Full example with a popover
+
+```tsx
+import { TabAddMenu } from 'react-splitkit';
+import * as Popover from '@radix-ui/react-popover';
+
+const AddTabButton = ({ panelId }: { panelId: string }) => (
+  <Popover.Root>
+    <Popover.Trigger asChild>
+      <button className="px-2 text-sm text-neutral-500 hover:text-neutral-900">+</button>
+    </Popover.Trigger>
+
+    <Popover.Content className="bg-white border rounded shadow-md p-1 min-w-36">
+      <TabAddMenu
+        panelId={panelId}
+        render={(items) => (
+          <ul className="flex flex-col gap-0.5">
+            {items.map(({ entry, alreadyAdded, add }) => (
+              <li key={entry.tabType}>
+                <button
+                  onClick={add}
+                  disabled={alreadyAdded}
+                  className="w-full text-left px-3 py-1.5 text-sm rounded hover:bg-neutral-100 disabled:opacity-40"
+                >
+                  {entry.icon && <span className="mr-2">{entry.icon}</span>}
+                  {entry.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      />
+    </Popover.Content>
+  </Popover.Root>
+);
+```
+
+Pass this as the `trailing` slot on [`TabList`](/docs/api/tab-list):
+
+```tsx
+<TabList
+  panelId={panel.id}
+  trailing={<AddTabButton panelId={panel.id} />}
+  renderTab={...}
+/>
+```

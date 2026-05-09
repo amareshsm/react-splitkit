@@ -1,0 +1,103 @@
+---
+title: useSplit
+description: Hook for reading a split node and programmatically setting its children's sizes.
+---
+
+`useSplit` gives you direct access to a `SplitNode` and the ability to set its children's sizes programmatically. It is the split-level companion to [`usePanel`](/docs/api/use-panel).
+
+```ts
+import { useSplit } from 'react-splitkit';
+
+const { split, setSizes } = useSplit(splitId);
+```
+
+## Signature
+
+```ts
+function useSplit(splitId: string): UseSplitResult
+
+interface UseSplitResult {
+  split: SplitNode | null;
+  setSizes: (sizes: number[]) => void;
+}
+```
+
+The component re-renders only when the split identified by `splitId` changes — not on unrelated mutations elsewhere in the tree.
+
+---
+
+## `split`
+
+```ts
+split: SplitNode | null
+```
+
+The current split node, or `null` if it has been removed from the tree. Always check for `null` before reading split fields.
+
+---
+
+## `setSizes`
+
+```ts
+setSizes(sizes: number[]): void
+```
+
+Sets the sizes of the split's children. Sizes are percentages and must sum to 100. The array length must match the number of children in the split — if it doesn't, the call is silently ignored.
+
+```tsx
+// Even thirds for a 3-child split
+setSizes([33.33, 33.33, 33.34]);
+
+// Give left panel 70%, right panel 30%
+setSizes([70, 30]);
+```
+
+Min/max constraints defined in the tab registry are still enforced after the call.
+
+---
+
+## When to use useSplit vs usePanel
+
+| | `useSplit` | `usePanel` |
+|---|---|---|
+| Scope | A `SplitNode` (container) | A `PanelNode` (leaf) |
+| Primary use | Programmatic resize | Tab management, collapse, maximize, split |
+| Key action | `setSizes` | `addTab`, `split`, `toggleCollapse`, `toggleMaximize` |
+
+Use `useSplit` when you need to control sizes from outside the drag handle — for example, a "reset layout" button or a preset that snaps panels to predefined ratios.
+
+---
+
+## Example: reset layout button
+
+```tsx
+import { useSplit } from 'react-splitkit';
+
+const ResetButton = ({ splitId }: { splitId: string }) => {
+  const { setSizes } = useSplit(splitId);
+
+  return (
+    <button onClick={() => setSizes([50, 50])}>
+      Reset to 50/50
+    </button>
+  );
+};
+```
+
+## Example: reading split state
+
+```tsx
+const SplitDebug = ({ splitId }: { splitId: string }) => {
+  const { split } = useSplit(splitId);
+
+  if (!split) return null;
+
+  return (
+    <pre>
+      {split.children.map((child, i) => (
+        `${child.id}: ${split.sizes[i]?.toFixed(1)}%\n`
+      ))}
+    </pre>
+  );
+};
+```

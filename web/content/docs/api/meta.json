@@ -5,8 +5,10 @@
     "layout-root",
     "tab-list",
     "tab-panel",
+    "tab-add-menu",
     "resizer",
     "use-panel",
+    "use-split",
     "use-layout",
     "use-layout-breakpoint",
     "types"

@@ -62,7 +62,7 @@ const MyPanel = ({ panel, style }: RenderPanelProps) => (
       panelId={panel.id}
       className="flex h-9 border-b border-gray-200"
       renderTab={({ isActive, tabProps, label }) => (
-        <div {...tabProps} role="tab" className={isActive ? 'font-bold px-3' : 'px-3'}>
+        <div {...tabProps} className={isActive ? 'font-bold px-3' : 'px-3'}>
           {label}
         </div>
       )}
@@ -93,8 +93,8 @@ between panels to resize.
 
 ## Next steps
 
-- Add a custom resizer via `renderResizer`
-- Use `usePanel` to split, collapse, or maximize panels programmatically
+- Add a custom resizer via [`renderResizer`](/docs/api/resizer)
+- Use [`usePanel`](/docs/api/use-panel) to split, collapse, or maximize panels programmatically
 - Browse the full [live examples](/examples) for advanced patterns
 
 ## Need help?

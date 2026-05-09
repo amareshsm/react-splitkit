@@ -3,7 +3,7 @@ title: TabPanel
 description: Renders the content area for the active tab in a panel.
 ---
 
-`TabPanel` renders the content region for a panel's tabs. By default it only mounts the active tab's content. The `mode` prop lets you keep all tab contents mounted (hidden but in the DOM) to preserve local state across tab switches.
+`TabPanel` renders the content region for a panel's tabs. Always used together with [`TabList`](/docs/api/tab-list) inside `renderPanel`. By default it only mounts the active tab's content. The `mode` prop lets you keep all tab contents mounted (hidden but in the DOM) to preserve local state across tab switches.
 
 ```tsx
 import { TabPanel } from 'react-splitkit';
@@ -30,16 +30,16 @@ ID of the panel whose active tab content should be rendered.
 ### `mode`
 
 ```ts
-mode?: 'mount-all-hide-inactive'
-// default: undefined (only active tab is mounted)
+mode?: 'mount-active' | 'mount-all-hide-inactive'
+// default: 'mount-active'
 ```
 
 Controls the mounting strategy for tab content:
 
 | Mode | Behaviour | When to use |
 |------|-----------|-------------|
-| `undefined` (default) | Only the active tab's content is mounted and rendered. Switching tabs unmounts the previous content. | Stateless content, registry-driven renders, most cases. |
-| `'mount-all-hide-inactive'` | All tab contents are mounted on first activation. Inactive tabs are hidden (`display: none`) but stay in the DOM. | When tabs hold stateful content (a code editor with cursor position, a video, scroll offset) that you don't want reset on tab switch. |
+| `'mount-active'` (default) | Only the active tab's content is mounted and rendered. Switching tabs unmounts the previous content. | Stateless content, registry-driven renders, most cases. |
+| `'mount-all-hide-inactive'` | All tab contents are mounted on first activation. Inactive tabs are hidden via the `hidden` attribute and `display: none` but stay in the DOM. | When tabs hold stateful content (a code editor with cursor position, a video, scroll offset) that you don't want reset on tab switch. |
 
 ```tsx
 <TabPanel

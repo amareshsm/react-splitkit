@@ -149,6 +149,8 @@ Yes — the layout tree is plain serializable JSON, so you can save it to `local
 
 This is a real differentiator — many layout libraries store state imperatively in refs or non-serializable internals, which makes "save the user's workspace and restore it later" surprisingly hard. With react-splitkit it's just `JSON.stringify`.
 
+See the [Persistence guide](/docs/guides/persistence) for database patterns, debouncing, and schema versioning.
+
 </Accordion>
 
 <Accordion id="ssr" title="Does it work with SSR and Next.js?">
@@ -182,6 +184,8 @@ dispatch({
 
 Pair this with HTML5 drag-and-drop, [`dnd-kit`](https://dndkit.com), or [`react-dnd`](https://react-dnd.github.io/react-dnd/) — whatever your project already uses. The library handles the tree mutation; you handle the visual feedback.
 
+See [`useLayout`](/docs/api/use-layout) for the full dispatch API.
+
 </Accordion>
 
 <Accordion id="a11y" title="Is react-splitkit accessible?">
@@ -203,6 +207,8 @@ Yes — accessibility is built in, not an afterthought. Out of the box:
 - DOM ids are auto-prefixed per provider so screen readers correctly associate tabs with their panels
 
 The headless layer keeps these guarantees regardless of how you style the components.
+
+See the [Keyboard reference](/docs/guides/keyboard) for the full shortcut map.
 
 </Accordion>
 

@@ -34,6 +34,17 @@ const layout = createSplit('root', 'horizontal', [
 
 `initialLayout` is read **once on mount** — the same way React's `defaultValue` works on an uncontrolled input. After mount the store owns the layout. Changing this prop on a subsequent render does nothing.
 
+If your sizes don't sum to 100, the library normalises them automatically so they do. You can also call `normalize(layout)` yourself before passing it in — useful when constructing layouts programmatically:
+
+```ts
+import { normalize } from 'react-splitkit';
+
+const layout = normalize(createSplit('root', 'horizontal', [
+  createPanel('a', [...]),
+  createPanel('b', [...]),
+]));
+```
+
 **To swap the layout at runtime, use `REPLACE_LAYOUT`:**
 
 ```tsx
@@ -44,6 +55,8 @@ const { dispatch } = useLayout();
 // Switch to a different saved workspace, load a user's layout, etc.
 dispatch({ type: 'REPLACE_LAYOUT', layout: newLayout });
 ```
+
+`dispatch` comes from [`useLayout`](/docs/api/use-layout). See all available actions there.
 
 **To fully reset the store** (different user, different mode), remount with a new `key`:
 
@@ -85,19 +98,24 @@ const registry: TabRegistry = {
 onChange?: (layout: LayoutNode, action: LayoutAction) => void
 ```
 
-Called after every successful state mutation with the new layout tree and the action that caused it. Use this to persist the layout:
+Called after every successful state mutation with the new layout tree and the action that caused it.
+
+- `layout` — the full serializable layout tree after the mutation. Save this anywhere and pass it back as `initialLayout` on the next mount.
+- `action` — the `LayoutAction` that triggered the change (e.g. `{ type: 'RESIZE_SPLIT', ... }`). Use this to skip persistence for high-frequency actions like dragging:
 
 ```tsx
 <LayoutProvider
   initialLayout={saved ?? defaultLayout}
   registry={registry}
-  onChange={(layout) => {
+  onChange={(layout, action) => {
+    // Skip saving mid-drag — only persist on drag end
+    if (action.type === 'RESIZE_SPLIT') return;
     localStorage.setItem('my-layout', JSON.stringify(layout));
   }}
 >
 ```
 
-The callback receives the full serializable layout tree — save it anywhere (localStorage, a database, URL params) and pass it back as `initialLayout` on the next mount.
+See the [Persistence guide](/docs/guides/persistence) for database patterns, debouncing, and schema versioning.
 
 ---
 
@@ -146,3 +164,23 @@ const { dispatch } = useLayout();
 
 dispatch({ type: 'REPLACE_LAYOUT', layout: savedLayout });
 ```
+
+---
+
+## Reading the registry at runtime
+
+Two hooks let you read the registry from any descendant component:
+
+```ts
+import { useTabRegistry, useTabRegistryEntry } from 'react-splitkit';
+
+// Full registry
+const registry = useTabRegistry();
+
+// Single entry by tabType
+const editorEntry = useTabRegistryEntry('editor'); // TabRegistryEntry | undefined
+```
+
+Use these when a component needs to render registry metadata — for example, reading `entry.icon` or `entry.title` to display in a custom tab label, or checking `entry.closable` before showing a close button.
+
+These hooks are the read-only complement to the `registry` prop. The registry itself is stable across renders — it doesn't cause re-renders when the layout changes.
