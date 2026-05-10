@@ -11,6 +11,8 @@ import {
 } from 'react-splitkit';
 import { PanelChrome } from '@/components/PanelChrome';
 import { PageShell } from '@/components/PageShell';
+import { LiveExample } from '@/components/LiveExample';
+import { nestedFiles } from '@/lib/examples/nested';
 
 // ── content ────────────────────────────────────────────────
 
@@ -232,6 +234,7 @@ export default function NestedPage() {
     <PageShell
       title="Nested IDE layout"
       description="Infrastructure dashboard · sidebar + (metrics / logs) split"
+      source={<LiveExample files={nestedFiles} template="vite-react-ts" height={560} />}
     >
       <LayoutProvider initialLayout={layout} registry={infraRegistry}>
         <LayoutRoot

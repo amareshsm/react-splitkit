@@ -14,6 +14,8 @@ import {
   type TabRegistry,
 } from 'react-splitkit';
 import { PageShell } from '@/components/PageShell';
+import { LiveExample } from '@/components/LiveExample';
+import { cursorFiles } from '@/lib/examples/cursor-ui';
 import { CloseIcon, FileIcon, FolderIcon } from '@/components/icons';
 
 // ── layout shape ────────────────────────────────────────────
@@ -548,6 +550,7 @@ export default function CursorUIPage() {
       title="Cursor UI layout"
       description="IDE clone · file explorer + editor + terminal + AI agent — all resizable"
       bgClassName="bg-white dark:bg-neutral-950"
+      source={<LiveExample files={cursorFiles} template="vite-react-ts" height={600} />}
     >
       <div className="h-full flex flex-col rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden bg-white dark:bg-neutral-950 shadow-sm">
         <div className="flex-1 min-h-0">

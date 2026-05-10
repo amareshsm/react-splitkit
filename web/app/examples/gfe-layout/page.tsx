@@ -16,11 +16,11 @@ import {
   type TabDescriptor,
   type TabRegistryEntry,
 } from 'react-splitkit';
-import Link from 'next/link';
 import { demoRegistry } from '@/registry';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PageShell } from '@/components/PageShell';
+import { LiveExample } from '@/components/LiveExample';
+import { gfeFiles } from '@/lib/examples/gfe-layout';
 import {
-  ArrowLeftIcon,
   CloseIcon,
   CollapseIcon,
   FileIcon,
@@ -218,7 +218,7 @@ const GFEChrome = ({ panel, style }: RenderPanelProps) => {
             )}
           </div>
         }
-        renderTab={({ tab, isActive, tabProps, label, closable, close }) => (
+        renderTab={({ isActive, tabProps, label, closable, close }) => (
           <button
             {...tabProps}
             type="button"
@@ -292,32 +292,18 @@ const GFEResizer = (p: RenderResizerProps) => (
 
 export default function GFELayoutPage() {
   return (
-    <div className="h-screen w-screen flex flex-col bg-neutral-100 dark:bg-neutral-950 overflow-hidden">
-      <header className="flex-shrink-0 border-b border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-neutral-950/70 backdrop-blur">
-        <div className="px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-md text-sm text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              <ArrowLeftIcon width={14} height={14} />
-              Back
-            </Link>
-            <span className="h-5 w-px bg-neutral-200 dark:bg-neutral-800" />
-            <h1 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">GreatFrontend Layout</h1>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
-      <div className="flex-1 min-h-0 p-3">
-        <LayoutProvider initialLayout={layout} registry={demoRegistry}>
-          <LayoutRoot
-            renderPanel={(p) => <GFEChrome {...p} />}
-            renderResizer={GFEResizer}
-            style={{ height: '100%' }}
-          />
-        </LayoutProvider>
-      </div>
-    </div>
+    <PageShell
+      title="GreatFrontend Layout"
+      description="Coding-platform UI · description / editor / browser / console"
+      source={<LiveExample files={gfeFiles} template="vite-react-ts" height={580} />}
+    >
+      <LayoutProvider initialLayout={layout} registry={demoRegistry}>
+        <LayoutRoot
+          renderPanel={(p) => <GFEChrome {...p} />}
+          renderResizer={GFEResizer}
+          style={{ height: '100%' }}
+        />
+      </LayoutProvider>
+    </PageShell>
   );
 }

@@ -1,22 +1,21 @@
 type CellValue = 'yes' | 'no' | { partial: number };
 
 const rows: { feature: string; splitkit: CellValue; panels: CellValue; allotment: CellValue }[] = [
-  { feature: 'Fully headless (zero CSS)',    splitkit: 'yes', panels: { partial: 1 }, allotment: 'no'           },
+  { feature: 'Fully headless (zero CSS)',    splitkit: 'yes', panels: 'yes',          allotment: 'no'           },
   { feature: 'Resizable panels',             splitkit: 'yes', panels: 'yes',          allotment: 'yes'          },
   { feature: 'Tabbed panels',                splitkit: 'yes', panels: 'no',           allotment: 'no'           },
   { feature: 'Split panels at runtime',      splitkit: 'yes', panels: 'no',           allotment: 'no'           },
-  { feature: 'Collapse & Maximize',          splitkit: 'yes', panels: { partial: 2 }, allotment: 'no'           },
-  { feature: 'Serializable JSON layout',     splitkit: 'yes', panels: { partial: 3 }, allotment: 'no'           },
+  { feature: 'Collapse & Maximize',          splitkit: 'yes', panels: { partial: 1 }, allotment: 'no'           },
+  { feature: 'Serializable JSON layout',     splitkit: 'yes', panels: { partial: 2 }, allotment: 'no'           },
   { feature: 'Multiple independent layouts', splitkit: 'yes', panels: 'yes',          allotment: 'yes'          },
-  { feature: 'Full keyboard + ARIA',         splitkit: 'yes', panels: { partial: 4 }, allotment: { partial: 4 } },
+  { feature: 'Full keyboard + ARIA',         splitkit: 'yes', panels: 'yes',          allotment: { partial: 3 } },
   { feature: 'TypeScript-first',             splitkit: 'yes', panels: 'yes',          allotment: 'yes'          },
 ];
 
 const notes: Record<number, string> = {
-  1: 'Requires minimal CSS for layout mechanics to function — no visual opinions, but not fully zero-CSS.',
-  2: 'Has a collapsible prop but no maximize.',
-  3: 'onLayout saves panel sizes only — the full panel tree structure is defined in JSX, not serializable.',
-  4: 'Basic keyboard support; missing roving tabindex and full aria-value* attributes on resizers.',
+  1: 'Has a collapsible prop but no maximize.',
+  2: 'onLayout saves panel sizes only — the full panel tree structure is defined in JSX, not serializable.',
+  3: 'Resize handle has basic keyboard navigation; lacks full aria-value* attributes.',
 };
 
 const Check = () => (
